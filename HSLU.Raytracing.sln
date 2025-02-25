@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "random-pixel-image", "random-pixel-image\random-pixel-image.csproj", "{4A01388D-AD82-4AD1-A179-8D687F5E0D6C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleCircle", "SimpleCircle\SimpleCircle.csproj", "{BA494C99-FBDC-4ED8-9060-86AC9A93DC22}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4A01388D-AD82-4AD1-A179-8D687F5E0D6C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A01388D-AD82-4AD1-A179-8D687F5E0D6C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A01388D-AD82-4AD1-A179-8D687F5E0D6C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A01388D-AD82-4AD1-A179-8D687F5E0D6C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA494C99-FBDC-4ED8-9060-86AC9A93DC22}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA494C99-FBDC-4ED8-9060-86AC9A93DC22}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA494C99-FBDC-4ED8-9060-86AC9A93DC22}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA494C99-FBDC-4ED8-9060-86AC9A93DC22}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

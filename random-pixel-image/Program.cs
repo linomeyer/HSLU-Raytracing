@@ -1,4 +1,5 @@
-﻿using SkiaSharp;
+﻿using Commons;
+using SkiaSharp;
 
 namespace random_pixel_image;
 
@@ -11,7 +12,7 @@ internal static class Program
     private static void Main()
     {
         var bitmap = GenerateBitmap();
-        SaveBitmapAsImage(bitmap);
+        ImageHandler.SaveBitmapAsImage(bitmap, FilePath);
         Console.WriteLine($"Random color image saved to {FilePath}");
     }
 

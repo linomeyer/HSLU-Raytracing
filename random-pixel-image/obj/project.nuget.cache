@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "iB2X1oN+20o=",
+  "dgSpecHash": "BHrMHkTa7QM=",
   "success": true,
-  "projectFilePath": "C:\\Users\\Lino\\RiderProjects\\HSLU.Raytracing\\random-pixel-image\\random-pixel-image.csproj",
+  "projectFilePath": "C:\\workspace\\hslu\\raytracing\\HSLU.Raytracing\\random-pixel-image\\random-pixel-image.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Lino\\.nuget\\packages\\skiasharp\\3.118.0-preview.2.3\\skiasharp.3.118.0-preview.2.3.nupkg.sha512",
     "C:\\Users\\Lino\\.nuget\\packages\\skiasharp.nativeassets.macos\\3.118.0-preview.2.3\\skiasharp.nativeassets.macos.3.118.0-preview.2.3.nupkg.sha512",

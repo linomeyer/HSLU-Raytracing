@@ -1,4 +1,4 @@
-﻿namespace VectorCircle;
+﻿namespace Commons;
 
 public class Vector2D(int x, int y)
 {

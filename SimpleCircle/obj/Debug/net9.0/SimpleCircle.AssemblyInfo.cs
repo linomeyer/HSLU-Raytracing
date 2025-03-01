@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SimpleCircle")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5082cf765e8d18711379026dad982da3c50036d8")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3482a9e8440581d4280e9bf829757b77ad779bdb")]
 [assembly: System.Reflection.AssemblyProductAttribute("SimpleCircle")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SimpleCircle")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

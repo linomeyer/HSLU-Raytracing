@@ -12,6 +12,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LayeredCircle", "LayeredCir
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SphereCutter", "SphereCutter\SphereCutter.csproj", "{D5EEF537-C796-47CB-B1DF-1E52E84CB02B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LotsOfSpheres", "LotsOfSpheres\LotsOfSpheres.csproj", "{68EC3D91-B0CC-47A8-8FA3-367846576711}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,5 +44,9 @@ Global
 		{D5EEF537-C796-47CB-B1DF-1E52E84CB02B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D5EEF537-C796-47CB-B1DF-1E52E84CB02B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D5EEF537-C796-47CB-B1DF-1E52E84CB02B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{68EC3D91-B0CC-47A8-8FA3-367846576711}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{68EC3D91-B0CC-47A8-8FA3-367846576711}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{68EC3D91-B0CC-47A8-8FA3-367846576711}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{68EC3D91-B0CC-47A8-8FA3-367846576711}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

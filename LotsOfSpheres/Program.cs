@@ -2,6 +2,8 @@
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
+namespace LotsOfSpheres;
+
 internal static class Program
 {
     private const int Width = 800;

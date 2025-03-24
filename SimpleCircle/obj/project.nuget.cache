@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "PBBYehtUU4M=",
+  "dgSpecHash": "/+yTeUA0Jo0=",
   "success": true,
   "projectFilePath": "C:\\workspace\\hslu\\raytracing\\HSLU.Raytracing\\SimpleCircle\\SimpleCircle.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\Lino\\.nuget\\packages\\sixlabors.imagesharp\\3.1.6\\sixlabors.imagesharp.3.1.6.nupkg.sha512",
     "C:\\Users\\Lino\\.nuget\\packages\\skiasharp\\3.118.0-preview.2.3\\skiasharp.3.118.0-preview.2.3.nupkg.sha512",
     "C:\\Users\\Lino\\.nuget\\packages\\skiasharp.nativeassets.macos\\3.118.0-preview.2.3\\skiasharp.nativeassets.macos.3.118.0-preview.2.3.nupkg.sha512",
     "C:\\Users\\Lino\\.nuget\\packages\\skiasharp.nativeassets.win32\\3.118.0-preview.2.3\\skiasharp.nativeassets.win32.3.118.0-preview.2.3.nupkg.sha512"

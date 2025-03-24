@@ -44,7 +44,7 @@ internal static class Program
                 {
                     var intersectionDistance = sphere.IntersectionDistance(currentPos, ray);
 
-                    var hittingPoint = currentPos + ray * (int)intersectionDistance;
+                    var hittingPoint = currentPos + ray * intersectionDistance;
                     var n = (hittingPoint - sphere.Center).Normalize();
                     var s = (ray - hittingPoint).Normalize();
 

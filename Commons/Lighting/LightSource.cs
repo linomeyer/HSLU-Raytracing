@@ -1,4 +1,6 @@
-﻿namespace Commons.Lighting;
+﻿using Commons._3D;
+
+namespace Commons.Lighting;
 
 public class LightSource(Vector3D position, RgbColor color, double intensity)
 {

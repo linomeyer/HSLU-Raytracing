@@ -41,3 +41,6 @@ C:\workspace\hslu\raytracing\HSLU.Raytracing\random-pixel-image\obj\Debug\net9.0
 C:\workspace\hslu\raytracing\HSLU.Raytracing\random-pixel-image\obj\Debug\net9.0\random-pixel-image.pdb
 C:\workspace\hslu\raytracing\HSLU.Raytracing\random-pixel-image\obj\Debug\net9.0\random-pixel-image.genruntimeconfig.cache
 C:\workspace\hslu\raytracing\HSLU.Raytracing\random-pixel-image\obj\Debug\net9.0\ref\random-pixel-image.dll
+C:\workspace\hslu\raytracing\HSLU.Raytracing\random-pixel-image\bin\Debug\net9.0\SixLabors.ImageSharp.dll
+C:\workspace\hslu\raytracing\HSLU.Raytracing\random-pixel-image\bin\Debug\net9.0\Commons.dll
+C:\workspace\hslu\raytracing\HSLU.Raytracing\random-pixel-image\bin\Debug\net9.0\Commons.pdb

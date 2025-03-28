@@ -1,4 +1,4 @@
-﻿namespace Commons;
+﻿namespace Commons._3D;
 
 public class Vector3D(double x, double y, double z)
 {

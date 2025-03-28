@@ -1,6 +1,6 @@
 ﻿using SkiaSharp;
 
-namespace Commons;
+namespace Commons._2D;
 
 public class Circle(Vector2D center, double radius, SKColor color)
 {

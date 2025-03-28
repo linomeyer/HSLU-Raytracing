@@ -1,4 +1,4 @@
-﻿namespace Commons;
+﻿namespace Commons._3D;
 
 public class Sphere(Vector3D center, int radius, RgbColor color)
 {

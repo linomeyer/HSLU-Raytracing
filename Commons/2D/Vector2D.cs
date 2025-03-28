@@ -1,4 +1,4 @@
-﻿namespace Commons;
+﻿namespace Commons._2D;
 
 public class Vector2D(int x, int y)
 {

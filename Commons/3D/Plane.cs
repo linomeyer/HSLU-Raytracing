@@ -1,4 +1,4 @@
-﻿namespace Commons;
+﻿namespace Commons._3D;
 
 public class Plane
 {
@@ -23,7 +23,7 @@ public class Plane
     public RgbColor Color { get; }
 
 
-    public bool RayIntersectsPlane(Ray ray)
+    public double NextIntersection(Ray ray)
     {
         var lambda = Lambda(ray);
         if (lambda > 0)
@@ -42,10 +42,10 @@ public class Plane
             var v2 = cq.CrossProduct(cb);
             var v3 = aq.CrossProduct(ac);
 
-            if (CheckEqualPrefix(v1.Z, v2.Z, v3.Z)) return true;
+            if (CheckEqualPrefix(v1.Z, v2.Z, v3.Z)) return lambda;
         }
 
-        return false;
+        return double.MaxValue;
     }
 
     public Vector3D IntersectionPoint(Ray ray)
@@ -54,15 +54,16 @@ public class Plane
         return ray.Origin + ray.Direction * lambda;
     }
 
-    public double Lambda(Ray ray)
+    private double Lambda(Ray ray)
     {
         var p = ray.Origin;
         var u = ray.Direction;
 
         var denominator = u.ScalarProduct(NormalVector);
-        if (Math.Abs(denominator) < 1e-9) return -1;
+        if (Math.Abs(denominator) < MathConstants.Epsilon) return double.MaxValue;
 
-        return (A - p).ScalarProduct(NormalVector) / denominator;
+        var lambda = (A - p).ScalarProduct(NormalVector) / denominator;
+        return lambda > 0 ? lambda : double.MaxValue;
     }
 
     private bool CheckEqualPrefix(double v1Z, double v2Z, double v3Z) =>

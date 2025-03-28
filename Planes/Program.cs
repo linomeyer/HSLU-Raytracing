@@ -4,21 +4,25 @@ using Commons.Lighting;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Cube;
+namespace Planes;
 
 internal static class Program
 {
     private const int Width = 800;
     private const int Height = 600;
     private const int Depth = 600;
-    private const string FilePath = ImageHandler.ImageFolderPath + "cube.png";
+    private const string FilePath = ImageHandler.ImageFolderPath + "planes.png";
 
     private static readonly List<Plane> Planes =
     [
-        new(new Vector3D(0, 600, 600), new Vector3D(800, 600, 600), new Vector3D(0, 0, 600), RgbColor.Blue)
-    ];
+        new(new Vector3D(0, 600, 600), new Vector3D(800, 600, 600), new Vector3D(0, 0, 600), RgbColor.Blue),
 
-    private static readonly Commons._3D.Cube Cube = new(new Vector3D(400, 300, 150), 100, RgbColor.Red);
+        new(new Vector3D(430, 540, 400), new Vector3D(500, 300, 400), new Vector3D(300, 500, 400), RgbColor.Orange),
+
+        new(new Vector3D(598, 414, 105), new Vector3D(723, 371, 255), new Vector3D(554, 589, 192), RgbColor.Red),
+
+        new(new Vector3D(365, 300, 300), new Vector3D(235, 530, 600), new Vector3D(515, 580, 300), RgbColor.Cyan)
+    ];
 
     private static readonly LightSource LightSource =
         new(
@@ -45,19 +49,6 @@ internal static class Program
                 var color = RgbColor.Black;
 
                 var ray = new Ray(new Vector3D(x, y, 0), new Vector3D(0, 0, 1));
-
-                var (lambda, cubeNormalVector) = Cube.NextIntersection(ray);
-                if (lambda < double.MaxValue)
-                {
-                    var intersectionPoint = ray.Origin + ray.Direction * lambda;
-                    var vectorToLightSource = (LightSource.Position - intersectionPoint).Normalize();
-                    var scalarProductOfNormalizedPLaneToLightSource =
-                        Math.Max(0, cubeNormalVector.ScalarProduct(vectorToLightSource));
-
-                    color = Cube.Color * LightSource.Color *
-                            scalarProductOfNormalizedPLaneToLightSource * LightSource.Intensity
-                            + new RgbColor(0.1, 0.1, 0.1);
-                }
 
                 foreach (var plane in Planes)
                 {

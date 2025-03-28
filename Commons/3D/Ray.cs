@@ -1,4 +1,4 @@
-﻿namespace Commons;
+﻿namespace Commons._3D;
 
 public class Ray(Vector3D origin, Vector3D direction)
 {

@@ -18,11 +18,11 @@ internal static class Program
         new(new Vector3D(0, 600, 600), new Vector3D(800, 600, 600), new Vector3D(0, 0, 600), RgbColor.Blue)
     ];
 
-    private static readonly Commons._3D.Cube Cube = new(new Vector3D(400, 300, 150), 100, RgbColor.Red);
+    private static readonly Commons._3D.Cube Cube = new(new Vector3D(400, 300, 150), 150, RgbColor.Red, 45);
 
     private static readonly LightSource LightSource =
         new(
-            new Vector3D(300, 0, -250),
+            new Vector3D(300, 0, -300),
             new RgbColor(1, 1, 0.9),
             1
         );
@@ -46,8 +46,18 @@ internal static class Program
 
                 var ray = new Ray(new Vector3D(x, y, 0), new Vector3D(0, 0, 1));
 
-                var (lambda, cubeNormalVector) = Cube.NextIntersection(ray);
-                if (lambda < double.MaxValue)
+                foreach (var plane in Planes)
+                {
+                    var currentLambda = plane.NextIntersection(ray);
+                    if (currentLambda < nearestLambda)
+                    {
+                        nearestLambda = currentLambda;
+                        color = ColorPlane(ray, plane);
+                    }
+                }
+
+                var (hasHit, lambda, cubeNormalVector) = Cube.NextIntersection(ray);
+                if (hasHit && lambda < nearestLambda)
                 {
                     var intersectionPoint = ray.Origin + ray.Direction * lambda;
                     var vectorToLightSource = (LightSource.Position - intersectionPoint).Normalize();
@@ -57,16 +67,6 @@ internal static class Program
                     color = Cube.Color * LightSource.Color *
                             scalarProductOfNormalizedPLaneToLightSource * LightSource.Intensity
                             + new RgbColor(0.1, 0.1, 0.1);
-                }
-
-                foreach (var plane in Planes)
-                {
-                    var currentLambda = plane.NextIntersection(ray);
-                    if (currentLambda < nearestLambda)
-                    {
-                        nearestLambda = currentLambda;
-                        color = ColorPlane(ray, plane);
-                    }
                 }
 
                 var sphereColor = ColorSphere(ray);

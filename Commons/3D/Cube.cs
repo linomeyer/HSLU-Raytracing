@@ -19,8 +19,9 @@ public class Cube
     public RgbColor Color { get; }
     public double Rotation { get; }
 
-    public (double, Vector3D) NextIntersection(Ray ray)
+    public (bool hasHit, double lambda, Vector3D normalized) NextIntersection(Ray ray)
     {
+        var hasHit = false;
         var minLambda = double.MinValue;
         var normalizedVector = new Vector3D(0, 0, 0);
         foreach (var plane in cubeFaces)
@@ -28,12 +29,13 @@ public class Cube
             var lambda = plane.NextIntersection(ray);
             if (lambda < double.MaxValue && lambda > minLambda)
             {
+                hasHit = true;
                 minLambda = lambda;
                 normalizedVector = plane.NormalVector;
             }
         }
 
-        return (minLambda, normalizedVector);
+        return (hasHit, minLambda, normalizedVector);
     }
 
     private List<Plane> CreateCube()
@@ -47,7 +49,7 @@ public class Cube
             new(edges[0], edges[1], edges[2], Color),
             new(edges[0], edges[2], edges[3], Color),
             // Back
-            new(edges[4], edges[5], edges[6], Color),
+            new(edges[4], edges[6], edges[5], Color),
             new(edges[4], edges[7], edges[6], Color),
             // Left
             new(edges[0], edges[3], edges[7], Color),

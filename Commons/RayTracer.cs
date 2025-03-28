@@ -21,17 +21,14 @@ public class RayTracer(List<IObject3D> sceneObjects, List<LightSource> lightSour
             if (hasHit && intersectionDistance < nearestIntersection)
             {
                 nearestIntersection = intersectionDistance;
-                color = RgbColor.Black;
-
                 var intersectionPoint = CalcHelper.IntersectionPoint(ray, intersectionDistance);
 
-                foreach (var lightSource in LightSources)
-                    color += sceneObject switch
-                    {
-                        ITriangleBased triangleBased => ColorTriangleBased(triangleBased, intersectionPoint, lightSource),
-                        Sphere sphere => ColorSphere(sphere, intersectionPoint, lightSource),
-                        _ => color
-                    };
+                color = sceneObject switch
+                {
+                    ITriangleBased triangleBased => ColorTriangleBased(triangleBased, intersectionPoint),
+                    Sphere sphere => ColorSphere(sphere, intersectionPoint),
+                    _ => color
+                };
                 color += sceneObject.Color * AmbientLight;
             }
         }
@@ -39,42 +36,52 @@ public class RayTracer(List<IObject3D> sceneObjects, List<LightSource> lightSour
         return color;
     }
 
-    private RgbColor ColorSphere(Sphere sphere, Vector3D intersectionPoint, LightSource lightSource)
+    private RgbColor ColorSphere(Sphere sphere, Vector3D intersectionPoint)
     {
-        var vectorToLightSource = (lightSource.Position - intersectionPoint).Normalize();
-        var intersectionPointIsInShadow = CheckRayIntersectionWithOtherObjects(vectorToLightSource, intersectionPoint, lightSource);
-
-        if (!intersectionPointIsInShadow)
+        var color = RgbColor.Black;
+        foreach (var lightSource in LightSources)
         {
-            var normalized = (intersectionPoint - sphere.Center).Normalize();
-            var colorFactor = Math.Max(0, normalized.ScalarProduct(vectorToLightSource));
-            return sphere.Color * lightSource.Color * colorFactor * lightSource.Intensity;
+            var vectorToLightSource = (lightSource.Position - intersectionPoint).Normalize();
+            var intersectionPointIsInShadow = CheckRayIntersectionWithOtherObjects(vectorToLightSource, intersectionPoint, lightSource, sphere);
+
+            if (!intersectionPointIsInShadow)
+            {
+                var normalized = (intersectionPoint - sphere.Center).Normalize();
+                var colorFactor = Math.Max(0, normalized.ScalarProduct(vectorToLightSource));
+                color += sphere.Color * lightSource.Color * colorFactor * lightSource.Intensity;
+            }
         }
 
-        return RgbColor.Black;
+        return color;
     }
 
-    private RgbColor ColorTriangleBased(ITriangleBased triangleBased, Vector3D intersectionPoint, LightSource lightSource)
+    private RgbColor ColorTriangleBased(ITriangleBased triangleBased, Vector3D intersectionPoint)
     {
-        var vectorToLightSource = (lightSource.Position - intersectionPoint).Normalize();
-        var intersectionPointIsInShadow = CheckRayIntersectionWithOtherObjects(vectorToLightSource, intersectionPoint, lightSource);
-
-        if (!intersectionPointIsInShadow)
+        var color = RgbColor.Black;
+        foreach (var lightSource in LightSources)
         {
-            var colorFactor = Math.Max(0, triangleBased.Normalized.ScalarProduct(vectorToLightSource));
-            return triangleBased.Color * lightSource.Color * colorFactor * lightSource.Intensity;
+            var vectorToLightSource = (lightSource.Position - intersectionPoint).Normalize();
+            var intersectionPointIsInShadow = CheckRayIntersectionWithOtherObjects(vectorToLightSource, intersectionPoint, lightSource, triangleBased);
+
+            if (!intersectionPointIsInShadow)
+            {
+                var colorFactor = Math.Max(0, triangleBased.Normalized.ScalarProduct(vectorToLightSource));
+                color += triangleBased.Color * lightSource.Color * colorFactor * lightSource.Intensity;
+            }
         }
 
-        return RgbColor.Black;
+        return color;
     }
 
-    private bool CheckRayIntersectionWithOtherObjects(Vector3D vectorToLightSource, Vector3D intersectionPoint, LightSource lightSource)
+    private bool CheckRayIntersectionWithOtherObjects(Vector3D vectorToLightSource, Vector3D intersectionPoint, LightSource lightSource, IObject3D self)
     {
         var intersectionPointIsInShadow = false;
         var rayToLightSource = new Ray(intersectionPoint + vectorToLightSource * MathConstants.Epsilon, vectorToLightSource);
         var distanceToLightSource = Math.Abs((intersectionPoint - lightSource.Position).Length);
         foreach (var sceneObject in SceneObjects)
         {
+            if (sceneObject == self) continue; // TODO this is a workaround because sphere intersects itself at the moment
+
             var (hasHit, intersectionDistance) = sceneObject.NextIntersection(rayToLightSource);
             if (!hasHit) continue;
 

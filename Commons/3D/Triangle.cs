@@ -1,6 +1,6 @@
 ﻿namespace Commons._3D;
 
-public class Triangle : IObject3D
+public class Triangle : ITriangleBased
 {
     public Triangle(Vector3D a, Vector3D b, Vector3D c, RgbColor color)
     {
@@ -12,16 +12,14 @@ public class Triangle : IObject3D
         var v = b - a;
         var w = c - a;
 
-        NormalVector = v.CrossProduct(w).Normalize();
+        Normalized = v.CrossProduct(w).Normalize();
     }
-
-    public Vector3D NormalVector { get; }
 
     public Vector3D A { get; }
     public Vector3D B { get; }
     public Vector3D C { get; }
     public RgbColor Color { get; }
-
+    public Vector3D Normalized { get; }
 
     public (bool hasHit, double intersectionDistance) NextIntersection(Ray ray)
     {
@@ -53,10 +51,10 @@ public class Triangle : IObject3D
         var p = ray.Origin;
         var u = ray.Direction;
 
-        var denominator = u.ScalarProduct(NormalVector);
+        var denominator = u.ScalarProduct(Normalized);
         if (Math.Abs(denominator) < MathConstants.Epsilon) return double.MaxValue;
 
-        var lambda = (A - p).ScalarProduct(NormalVector) / denominator;
+        var lambda = (A - p).ScalarProduct(Normalized) / denominator;
         return lambda > 0 ? lambda : double.MaxValue;
     }
 

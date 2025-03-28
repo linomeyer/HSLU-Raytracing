@@ -74,7 +74,7 @@ internal static class Program
 
                             if (!intersectionPointIsInShadow)
                             {
-                                var scalarProductOfNormalizedPLaneToLightSource = Math.Max(0, plane.NormalVector.ScalarProduct(vectorToLightSource));
+                                var scalarProductOfNormalizedPLaneToLightSource = Math.Max(0, plane.Normalized.ScalarProduct(vectorToLightSource));
                                 color += plane.Color * lightSource.Color * scalarProductOfNormalizedPLaneToLightSource * lightSource.Intensity;
                             }
                         }

@@ -1,8 +1,9 @@
 ﻿namespace Commons._3D;
 
-public class Cube
+public class Cube : ITriangleBased
 {
-    private readonly List<Triangle> cubeFaces;
+    private readonly List<Triangle> _cubeFaces;
+    private Vector3D _normalVector;
 
     public Cube(Vector3D center, double size, RgbColor color, double rotation = 0)
     {
@@ -11,7 +12,7 @@ public class Cube
         Rotation = rotation;
         Color = color;
 
-        cubeFaces = CreateCube();
+        _cubeFaces = CreateCube();
     }
 
     public Vector3D Center { get; }
@@ -19,23 +20,24 @@ public class Cube
     public RgbColor Color { get; }
     public double Rotation { get; }
 
-    public (bool hasHit, double lambda, Vector3D normalized) NextIntersection(Ray ray)
+    public Vector3D Normalized => _normalVector != null ? _normalVector : throw new NullReferenceException();
+
+    public (bool hasHit, double intersectionDistance) NextIntersection(Ray ray)
     {
         var hasHit = false;
-        var minLambda = double.MinValue;
-        var normalizedVector = new Vector3D(0, 0, 0);
-        foreach (var plane in cubeFaces)
+        var minDistance = double.MinValue;
+        foreach (var plane in _cubeFaces)
         {
-            var (hasHitPlane, lambda) = plane.NextIntersection(ray);
-            if (hasHitPlane && lambda > minLambda)
+            var (hasHitPlane, intersectionDistance) = plane.NextIntersection(ray);
+            if (hasHitPlane && intersectionDistance > minDistance)
             {
                 hasHit = true;
-                minLambda = lambda;
-                normalizedVector = plane.NormalVector;
+                minDistance = intersectionDistance;
+                _normalVector = plane.Normalized;
             }
         }
 
-        return (hasHit, minLambda, normalizedVector);
+        return (hasHit, minDistance);
     }
 
     private List<Triangle> CreateCube()

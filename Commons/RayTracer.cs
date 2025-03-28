@@ -26,7 +26,7 @@ public class RayTracer(List<IObject3D> sceneObjects, List<LightSource> lightSour
 
                 color = sceneObject switch
                 {
-                    Triangle triangle => ColorTriangle(triangle, intersectionPoint),
+                    ITriangleBased triangleBased => ColorTriangleBased(triangleBased, intersectionPoint),
                     Sphere sphere => ColorSphere(sphere, intersectionPoint),
                     _ => color
                 };
@@ -51,17 +51,15 @@ public class RayTracer(List<IObject3D> sceneObjects, List<LightSource> lightSour
         return color;
     }
 
-    private RgbColor ColorTriangle(Triangle triangle, Vector3D intersectionPoint)
+    private RgbColor ColorTriangleBased(ITriangleBased triangle, Vector3D intersectionPoint)
     {
         var color = RgbColor.Black;
         foreach (var lightSource in LightSources)
         {
             var vectorToLightSource = (lightSource.Position - intersectionPoint).Normalize();
-            var scalarProductOfNormalizedPLaneToLightSource =
-                Math.Max(0, triangle.NormalVector.ScalarProduct(vectorToLightSource));
-            color += triangle.Color * lightSource.Color *
-                     scalarProductOfNormalizedPLaneToLightSource * lightSource.Intensity
-                     + new RgbColor(0.1, 0.1, 0.1);
+            var colorFactor = Math.Max(0, triangle.Normalized.ScalarProduct(vectorToLightSource));
+
+            color += triangle.Color * lightSource.Color * colorFactor * lightSource.Intensity + AmbientLight;
         }
 
         return color;

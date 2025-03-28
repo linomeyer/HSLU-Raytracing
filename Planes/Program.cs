@@ -11,7 +11,7 @@ internal static class Program
     private const int Width = 800;
     private const int Height = 600;
     private const int Depth = 600;
-    private const string FilePath = ImageHandler.ImageFolderPath + "planes.png";
+    private const string FilePath = ImageHandler.ImageFolderPath + "triangles.png";
 
     private static readonly List<IObject3D> Objects3D =
     [

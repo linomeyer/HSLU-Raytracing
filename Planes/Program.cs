@@ -13,25 +13,20 @@ internal static class Program
     private const int Depth = 600;
     private const string FilePath = ImageHandler.ImageFolderPath + "planes.png";
 
-    private static readonly List<Triangle> Planes =
+    private static readonly List<IObject3D> Objects3D =
     [
-        new(new Vector3D(0, 600, 600), new Vector3D(800, 600, 600), new Vector3D(0, 0, 600), RgbColor.Blue),
-
-        new(new Vector3D(430, 540, 400), new Vector3D(500, 300, 400), new Vector3D(300, 500, 400), RgbColor.Orange),
-
-        new(new Vector3D(598, 414, 105), new Vector3D(723, 371, 255), new Vector3D(554, 589, 192), RgbColor.Red),
-
-        new(new Vector3D(365, 300, 300), new Vector3D(235, 530, 600), new Vector3D(515, 580, 300), RgbColor.Cyan)
+        new Triangle(new Vector3D(0, 600, 600), new Vector3D(800, 600, 600), new Vector3D(0, 0, 600), RgbColor.Blue),
+        new Triangle(new Vector3D(430, 540, 400), new Vector3D(500, 300, 400), new Vector3D(300, 500, 400), RgbColor.Orange),
+        new Triangle(new Vector3D(598, 414, 105), new Vector3D(723, 371, 255), new Vector3D(554, 589, 192), RgbColor.Red),
+        new Triangle(new Vector3D(365, 300, 300), new Vector3D(235, 530, 600), new Vector3D(515, 580, 300), RgbColor.Cyan),
+        new Sphere(new Vector3D(650, 150, 300), 100, RgbColor.Green)
     ];
 
-    private static readonly LightSource LightSource =
-        new(
-            new Vector3D(300, 0, -250),
-            new RgbColor(1, 1, 0.9),
-            1
-        );
+    private static readonly List<LightSource> LightSource =
+    [
+        new(new Vector3D(300, 0, -250), new RgbColor(1, 1, 0.9), 1)
+    ];
 
-    private static readonly Sphere Sphere = new(new Vector3D(650, 150, 300), 100, RgbColor.Green);
 
     private static void Main()
     {
@@ -41,61 +36,17 @@ internal static class Program
 
     private static void CreateImage()
     {
+        var rayTracer = new RayTracer(Objects3D, LightSource);
         using var image = new Image<Rgba32>(Width, Height);
         for (var y = 0; y < Height; y++)
             for (var x = 0; x < Width; x++)
             {
-                var nearestLambda = double.MaxValue;
-                var color = RgbColor.Black;
-
                 var ray = new Ray(new Vector3D(x, y, 0), new Vector3D(0, 0, 1));
-
-                foreach (var plane in Planes)
-                {
-                    var (hasHit, currentLambda) = plane.NextIntersection(ray);
-                    if (hasHit && currentLambda < nearestLambda)
-                    {
-                        nearestLambda = currentLambda;
-                        color = ColorPlane(ray, plane, currentLambda);
-                    }
-                }
-
-                var sphereColor = ColorSphere(ray);
-                if (!sphereColor.Equals(RgbColor.Black))
-                    color = sphereColor;
+                var color = rayTracer.CalcRay(ray);
 
                 image[x, y] = color.ConvertToRgba32();
             }
 
         image.SaveAsPng(FilePath);
-    }
-
-    private static RgbColor ColorPlane(Ray ray, Triangle triangle, double lambda)
-    {
-        var intersectionPoint = CalcHelper.IntersectionPoint(ray, lambda);
-        var vectorToLightSource = (LightSource.Position - intersectionPoint).Normalize();
-        var scalarProductOfNormalizedPLaneToLightSource =
-            Math.Max(0, triangle.NormalVector.ScalarProduct(vectorToLightSource));
-
-        return triangle.Color * LightSource.Color *
-               scalarProductOfNormalizedPLaneToLightSource * LightSource.Intensity
-               + new RgbColor(0.1, 0.1, 0.1);
-    }
-
-    private static RgbColor ColorSphere(Ray ray)
-    {
-        var (hasHit, intersectionDistance) = Sphere.NextIntersection(ray);
-
-        var hittingPoint = ray.Origin + ray.Direction * intersectionDistance;
-        var n = (hittingPoint - Sphere.Center).Normalize();
-        var s = (LightSource.Position - hittingPoint).Normalize();
-
-        var colorFactor = s.ScalarProduct(n) > 0 ? s.ScalarProduct(n) : 0;
-
-        if (hasHit && intersectionDistance < double.MaxValue)
-            return new RgbColor(Sphere.Color.R, Sphere.Color.G, Sphere.Color.B) * colorFactor +
-                   new RgbColor(0.1, 0.1, 0.1);
-
-        return RgbColor.Black;
     }
 }

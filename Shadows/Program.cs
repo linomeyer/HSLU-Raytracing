@@ -3,7 +3,6 @@ using Commons._3D;
 using Commons.Lighting;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
-using Plane = Commons._3D.Plane;
 
 namespace Shadows;
 
@@ -14,7 +13,7 @@ internal static class Program
     private const int Depth = 600;
     private const string FilePath = ImageHandler.ImageFolderPath + "shadows.png";
 
-    private static readonly List<Plane> Planes =
+    private static readonly List<Triangle> Planes =
     [
         new(new Vector3D(0, 600, 600), new Vector3D(800, 600, 600), new Vector3D(0, 0, 600), RgbColor.Blue),
 
@@ -61,6 +60,7 @@ internal static class Program
                     var currentLambda = plane.NextIntersection(rayIntoScreen);
                     if (currentLambda < nearestLambda)
                     {
+                        color = RgbColor.Black;
                         nearestLambda = currentLambda;
                         var intersectionPoint = rayIntoScreen.Origin + rayIntoScreen.Direction * currentLambda;
 
@@ -68,7 +68,6 @@ internal static class Program
                         {
                             var intersectionPointIsInShadow = false;
                             var vectorToLightSource = (lightSource.Position - intersectionPoint).Normalize();
-
                             var rayToLightSource = new Ray(intersectionPoint + vectorToLightSource * MathConstants.Epsilon, vectorToLightSource);
 
                             intersectionPointIsInShadow = CheckRayIntersectionWithOtherObjects(rayToLightSource, intersectionPoint, lightSource);

@@ -43,7 +43,7 @@ internal static class Program
                 var ray = new Vector3D(0, 0, 1);
                 foreach (var sphere in Spheres.OrderByDescending(s => s.Center.Z))
                 {
-                    var intersectionDistance = sphere.IntersectionDistance(currentPos, ray);
+                    var intersectionDistance = sphere.NextIntersection(currentPos, ray);
 
                     var hittingPoint = currentPos + ray * intersectionDistance;
                     var n = (hittingPoint - sphere.Center).Normalize();

@@ -13,7 +13,7 @@ internal static class Program
     private const int Depth = 600;
     private const string FilePath = ImageHandler.ImageFolderPath + "planes.png";
 
-    private static readonly List<Plane> Planes =
+    private static readonly List<Triangle> Planes =
     [
         new(new Vector3D(0, 600, 600), new Vector3D(800, 600, 600), new Vector3D(0, 0, 600), RgbColor.Blue),
 
@@ -52,11 +52,11 @@ internal static class Program
 
                 foreach (var plane in Planes)
                 {
-                    var currentLambda = plane.NextIntersection(ray);
-                    if (currentLambda < nearestLambda)
+                    var (hasHit, currentLambda) = plane.NextIntersection(ray);
+                    if (hasHit && currentLambda < nearestLambda)
                     {
                         nearestLambda = currentLambda;
-                        color = ColorPlane(ray, plane);
+                        color = ColorPlane(ray, plane, currentLambda);
                     }
                 }
 
@@ -70,21 +70,21 @@ internal static class Program
         image.SaveAsPng(FilePath);
     }
 
-    private static RgbColor ColorPlane(Ray ray, Plane plane)
+    private static RgbColor ColorPlane(Ray ray, Triangle triangle, double lambda)
     {
-        var intersectionPoint = plane.IntersectionPoint(ray);
+        var intersectionPoint = CalcHelper.IntersectionPoint(ray, lambda);
         var vectorToLightSource = (LightSource.Position - intersectionPoint).Normalize();
         var scalarProductOfNormalizedPLaneToLightSource =
-            Math.Max(0, plane.NormalVector.ScalarProduct(vectorToLightSource));
+            Math.Max(0, triangle.NormalVector.ScalarProduct(vectorToLightSource));
 
-        return plane.Color * LightSource.Color *
+        return triangle.Color * LightSource.Color *
                scalarProductOfNormalizedPLaneToLightSource * LightSource.Intensity
                + new RgbColor(0.1, 0.1, 0.1);
     }
 
     private static RgbColor ColorSphere(Ray ray)
     {
-        var intersectionDistance = Sphere.IntersectionDistance(ray.Origin, ray.Direction);
+        var (hasHit, intersectionDistance) = Sphere.NextIntersection(ray);
 
         var hittingPoint = ray.Origin + ray.Direction * intersectionDistance;
         var n = (hittingPoint - Sphere.Center).Normalize();
@@ -92,7 +92,7 @@ internal static class Program
 
         var colorFactor = s.ScalarProduct(n) > 0 ? s.ScalarProduct(n) : 0;
 
-        if (intersectionDistance < double.MaxValue)
+        if (hasHit && intersectionDistance < double.MaxValue)
             return new RgbColor(Sphere.Color.R, Sphere.Color.G, Sphere.Color.B) * colorFactor +
                    new RgbColor(0.1, 0.1, 0.1);
 

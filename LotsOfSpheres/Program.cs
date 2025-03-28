@@ -51,7 +51,7 @@ internal static class Program
 
                 foreach (var sphere in spheres)
                 {
-                    var intersectionDistance = sphere.IntersectionDistance(currentPos, ray);
+                    var intersectionDistance = sphere.NextIntersection(currentPos, ray);
                     if (distanceToScreen > 0 && intersectionDistance < distanceToScreen)
                     {
                         distanceToScreen = intersectionDistance;

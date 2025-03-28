@@ -1,8 +1,8 @@
 ﻿namespace Commons._3D;
 
-public class Plane
+public class Triangle : IObject3D
 {
-    public Plane(Vector3D a, Vector3D b, Vector3D c, RgbColor color)
+    public Triangle(Vector3D a, Vector3D b, Vector3D c, RgbColor color)
     {
         A = a;
         B = b;
@@ -23,7 +23,7 @@ public class Plane
     public RgbColor Color { get; }
 
 
-    public double NextIntersection(Ray ray)
+    public (bool hasHit, double intersectionDistance) NextIntersection(Ray ray)
     {
         var lambda = Lambda(ray);
         if (lambda > 0)
@@ -42,16 +42,10 @@ public class Plane
             var v2 = cq.CrossProduct(cb);
             var v3 = aq.CrossProduct(ac);
 
-            if (CheckEqualPrefix(v1.Z, v2.Z, v3.Z)) return lambda;
+            if (CheckEqualPrefix(v1.Z, v2.Z, v3.Z)) return (true, lambda);
         }
 
-        return double.MaxValue;
-    }
-
-    public Vector3D IntersectionPoint(Ray ray)
-    {
-        var lambda = Lambda(ray);
-        return ray.Origin + ray.Direction * lambda;
+        return (false, double.MaxValue);
     }
 
     private double Lambda(Ray ray)

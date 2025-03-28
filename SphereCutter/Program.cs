@@ -63,7 +63,7 @@ internal static class Program
                 var ray = new Vector3D(0, 0, 1);
                 foreach (var sphere in Spheres.OrderByDescending(s => s.Center.Z))
                 {
-                    var intersectionDistance = sphere.IntersectionDistance(currentPos, ray);
+                    var intersectionDistance = sphere.NextIntersection(currentPos, ray);
                     if (distanceToScreen > 0 && intersectionDistance < distanceToScreen)
                     {
                         distanceToScreen = intersectionDistance;

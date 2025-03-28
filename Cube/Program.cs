@@ -13,7 +13,7 @@ internal static class Program
     private const int Depth = 600;
     private const string FilePath = ImageHandler.ImageFolderPath + "cube.png";
 
-    private static readonly List<Plane> Planes =
+    private static readonly List<Triangle> Planes =
     [
         new(new Vector3D(0, 600, 600), new Vector3D(800, 600, 600), new Vector3D(0, 0, 600), RgbColor.Blue)
     ];
@@ -79,21 +79,21 @@ internal static class Program
         image.SaveAsPng(FilePath);
     }
 
-    private static RgbColor ColorPlane(Ray ray, Plane plane)
+    private static RgbColor ColorPlane(Ray ray, Triangle triangle)
     {
-        var intersectionPoint = plane.IntersectionPoint(ray);
+        var intersectionPoint = triangle.IntersectionPoint(ray);
         var vectorToLightSource = (LightSource.Position - intersectionPoint).Normalize();
         var scalarProductOfNormalizedPLaneToLightSource =
-            Math.Max(0, plane.NormalVector.ScalarProduct(vectorToLightSource));
+            Math.Max(0, triangle.NormalVector.ScalarProduct(vectorToLightSource));
 
-        return plane.Color * LightSource.Color *
+        return triangle.Color * LightSource.Color *
                scalarProductOfNormalizedPLaneToLightSource * LightSource.Intensity
                + new RgbColor(0.1, 0.1, 0.1);
     }
 
     private static RgbColor ColorSphere(Ray ray)
     {
-        var intersectionDistance = Sphere.IntersectionDistance(ray.Origin, ray.Direction);
+        var intersectionDistance = Sphere.NextIntersection(ray.Origin, ray.Direction);
 
         var hittingPoint = ray.Origin + ray.Direction * intersectionDistance;
         var n = (hittingPoint - Sphere.Center).Normalize();

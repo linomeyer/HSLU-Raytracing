@@ -2,7 +2,7 @@
 
 public class Cube
 {
-    private readonly List<Plane> cubeFaces;
+    private readonly List<Triangle> cubeFaces;
 
     public Cube(Vector3D center, double size, RgbColor color, double rotation = 0)
     {
@@ -26,8 +26,8 @@ public class Cube
         var normalizedVector = new Vector3D(0, 0, 0);
         foreach (var plane in cubeFaces)
         {
-            var lambda = plane.NextIntersection(ray);
-            if (lambda < double.MaxValue && lambda > minLambda)
+            var (hasHitPlane, lambda) = plane.NextIntersection(ray);
+            if (hasHitPlane && lambda > minLambda)
             {
                 hasHit = true;
                 minLambda = lambda;
@@ -38,12 +38,12 @@ public class Cube
         return (hasHit, minLambda, normalizedVector);
     }
 
-    private List<Plane> CreateCube()
+    private List<Triangle> CreateCube()
     {
         var edges = CreateEdges();
         for (var i = 0; i < edges.Count; i++) edges[i] = Rotate(edges[i]);
 
-        var cube = new List<Plane>
+        var cube = new List<Triangle>
         {
             // Front
             new(edges[0], edges[1], edges[2], Color),

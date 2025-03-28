@@ -13,13 +13,13 @@ internal static class Program
     private const int Depth = 600;
     private const string FilePath = ImageHandler.ImageFolderPath + "shadows.png";
 
-    private static readonly List<Triangle> Planes =
+    private static readonly List<IObject3D> Objects3D =
     [
-        new(new Vector3D(0, 600, 600), new Vector3D(800, 600, 600), new Vector3D(0, 0, 600), RgbColor.Blue),
+        new Triangle(new Vector3D(0, 600, 600), new Vector3D(800, 600, 600), new Vector3D(0, 0, 600), RgbColor.Blue),
+        new Triangle(new Vector3D(430, 540, 400), new Vector3D(500, 300, 400), new Vector3D(300, 500, 400), RgbColor.Orange),
+        new Triangle(new Vector3D(598, 414, 105), new Vector3D(723, 371, 255), new Vector3D(554, 589, 192), RgbColor.Red),
 
-        new(new Vector3D(430, 540, 400), new Vector3D(500, 300, 400), new Vector3D(300, 500, 400), RgbColor.Orange),
-
-        new(new Vector3D(598, 414, 105), new Vector3D(723, 371, 255), new Vector3D(554, 589, 192), RgbColor.Red)
+        new Sphere(new Vector3D(150, 150, 200), 100, RgbColor.Green)
     ];
 
     private static readonly List<LightSource> LightSources =
@@ -46,65 +46,16 @@ internal static class Program
 
     private static void CreateImage()
     {
+        var rayTracer = new RayTracer(Objects3D, LightSources);
         using var image = new Image<Rgba32>(Width, Height);
         for (var y = 0; y < Height; y++)
             for (var x = 0; x < Width; x++)
             {
-                var color = RgbColor.Black;
-                var nearestLambda = double.MaxValue;
-
                 var rayIntoScreen = new Ray(new Vector3D(x, y, 0), new Vector3D(0, 0, 1));
-
-                foreach (var plane in Planes)
-                {
-                    var currentLambda = plane.NextIntersection(rayIntoScreen);
-                    if (currentLambda < nearestLambda)
-                    {
-                        color = RgbColor.Black;
-                        nearestLambda = currentLambda;
-                        var intersectionPoint = rayIntoScreen.Origin + rayIntoScreen.Direction * currentLambda;
-
-                        foreach (var lightSource in LightSources)
-                        {
-                            var intersectionPointIsInShadow = false;
-                            var vectorToLightSource = (lightSource.Position - intersectionPoint).Normalize();
-                            var rayToLightSource = new Ray(intersectionPoint + vectorToLightSource * MathConstants.Epsilon, vectorToLightSource);
-
-                            intersectionPointIsInShadow = CheckRayIntersectionWithOtherObjects(rayToLightSource, intersectionPoint, lightSource);
-
-                            if (!intersectionPointIsInShadow)
-                            {
-                                var scalarProductOfNormalizedPLaneToLightSource = Math.Max(0, plane.Normalized.ScalarProduct(vectorToLightSource));
-                                color += plane.Color * lightSource.Color * scalarProductOfNormalizedPLaneToLightSource * lightSource.Intensity;
-                            }
-                        }
-
-                        color += plane.Color * new RgbColor(0.1, 0.1, 0.1);
-                    }
-                }
-
+                var color = rayTracer.CalcRay(rayIntoScreen);
                 image[x, y] = color.ConvertToRgba32();
             }
 
         image.SaveAsPng(FilePath);
-    }
-
-    private static bool CheckRayIntersectionWithOtherObjects(Ray rayToLightSource, Vector3D intersectionPoint, LightSource lightSource)
-    {
-        var intersectionPointIsInShadow = false;
-        var distanceToLightSource = Math.Abs((intersectionPoint - lightSource.Position).Length);
-        foreach (var plane2 in Planes)
-        {
-            var lambda2 = plane2.NextIntersection(rayToLightSource);
-            var intersectionPointWithOtherObject = rayToLightSource.Origin + rayToLightSource.Direction * lambda2;
-
-            var distanceToIntersectionPointWithOtherObject =
-                Math.Abs((intersectionPoint - intersectionPointWithOtherObject).Length);
-
-            if (distanceToIntersectionPointWithOtherObject < distanceToLightSource)
-                intersectionPointIsInShadow = true;
-        }
-
-        return intersectionPointIsInShadow;
     }
 }

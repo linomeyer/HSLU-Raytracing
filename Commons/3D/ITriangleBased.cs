@@ -3,5 +3,4 @@
 public interface ITriangleBased : IObject3D
 {
     Vector3D Normalized { get; }
-    RgbColor Color { get; }
 }

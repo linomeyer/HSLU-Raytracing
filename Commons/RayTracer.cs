@@ -80,13 +80,13 @@ public class RayTracer(List<IObject3D> sceneObjects, List<LightSource> lightSour
         var distanceToLightSource = Math.Abs((intersectionPoint - lightSource.Position).Length);
         foreach (var sceneObject in SceneObjects)
         {
-            if (sceneObject == self) continue; // TODO this is a workaround because sphere intersects itself at the moment
+            if (sceneObject == self && sceneObject is Sphere) continue; // TODO this is a workaround because sphere intersects itself at the moment
 
             var (hasHit, intersectionDistance) = sceneObject.NextIntersection(rayToLightSource);
+
             if (!hasHit) continue;
 
             var intersectionPointWithOtherObject = CalcHelper.IntersectionPoint(rayToLightSource, intersectionDistance);
-
             var distanceToIntersectionPointWithOtherObject = Math.Abs((intersectionPoint - intersectionPointWithOtherObject).Length);
 
             if (distanceToIntersectionPointWithOtherObject < distanceToLightSource)

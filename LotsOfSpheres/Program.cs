@@ -46,17 +46,19 @@ internal static class Program
             {
                 var color = Color.Black;
                 var distanceToScreen = double.MaxValue;
-                var currentPos = new Vector3D(x, y, 0);
-                var ray = new Vector3D(0, 0, 1);
+                var ray = new Ray(new Vector3D(x, y, 0), new Vector3D(0, 0, 1));
 
                 foreach (var sphere in spheres)
                 {
-                    var intersectionDistance = sphere.NextIntersection(currentPos, ray);
+                    var (_, intersectionDistance) = sphere.NextIntersection(ray);
                     if (distanceToScreen > 0 && intersectionDistance < distanceToScreen)
                     {
                         distanceToScreen = intersectionDistance;
-                        color = new Rgba32(sphere.Color.R, sphere.Color.G, sphere.Color.B,
-                            (byte)(255 * (1 - intersectionDistance / Depth)));
+                        var red = (byte)(sphere.Color.R * 255 >= 255 ? 255 : sphere.Color.R * 255);
+                        var green = (byte)(sphere.Color.G * 255 >= 255 ? 255 : sphere.Color.G * 255);
+                        var blue = (byte)(sphere.Color.B * 255 >= 255 ? 255 : sphere.Color.B * 255);
+                        var alpha = (byte)(255 * (1 - intersectionDistance / Depth));
+                        color = new Rgba32(red, green, blue, alpha);
                     }
                 }
 

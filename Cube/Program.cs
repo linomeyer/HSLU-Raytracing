@@ -17,13 +17,26 @@ internal static class Program
     [
         new Triangle(new Vector3D(0, 600, 600), new Vector3D(800, 600, 600), new Vector3D(0, 0, 600), RgbColor.Blue),
         new Sphere(new Vector3D(650, 150, 300), 100, RgbColor.Green),
-        new Commons._3D.Cube(new Vector3D(400, 300, 150), 150, RgbColor.Red, 45)
+        new Commons._3D.Cube(new Vector3D(200, 250, 200), 150, RgbColor.Red, 30),
+
+        new Triangle(new Vector3D(348, 327, 205), new Vector3D(473, 284, 355), new Vector3D(304, 502, 292), RgbColor.Red),
+        new Triangle(new Vector3D(473, 284, 355), new Vector3D(429, 459, 442), new Vector3D(304, 502, 292), RgbColor.Red),
+        new Triangle(new Vector3D(498, 414, 105), new Vector3D(623, 371, 255), new Vector3D(454, 589, 192), RgbColor.Red),
+        new Triangle(new Vector3D(623, 371, 255), new Vector3D(579, 546, 342), new Vector3D(454, 589, 192), RgbColor.Red),
+        new Triangle(new Vector3D(348, 327, 205), new Vector3D(473, 284, 355), new Vector3D(498, 414, 105), RgbColor.Red),
+        new Triangle(new Vector3D(473, 284, 355), new Vector3D(623, 371, 255), new Vector3D(498, 414, 105), RgbColor.Red),
+        new Triangle(new Vector3D(304, 502, 292), new Vector3D(429, 459, 442), new Vector3D(454, 589, 192), RgbColor.Red),
+        new Triangle(new Vector3D(429, 459, 442), new Vector3D(579, 546, 342), new Vector3D(454, 589, 192), RgbColor.Red),
+        new Triangle(new Vector3D(348, 327, 205), new Vector3D(304, 502, 292), new Vector3D(498, 414, 105), RgbColor.Red),
+        new Triangle(new Vector3D(304, 502, 292), new Vector3D(454, 589, 192), new Vector3D(498, 414, 105), RgbColor.Red),
+        new Triangle(new Vector3D(473, 284, 355), new Vector3D(429, 459, 442), new Vector3D(623, 371, 255), RgbColor.Red),
+        new Triangle(new Vector3D(429, 459, 442), new Vector3D(579, 546, 342), new Vector3D(623, 371, 255), RgbColor.Red)
     ];
 
 
     private static readonly List<LightSource> LightSources =
     [
-        new(new Vector3D(300, 0, -300), new RgbColor(1, 1, 0.9), 1)
+        new(new Vector3D(0, 0, -1300), new RgbColor(1, 1, 0.9), 1)
     ];
 
 

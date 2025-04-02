@@ -33,7 +33,7 @@ internal static class Program
         for (var y = 0; y < Height; y++)
             for (var x = 0; x < Width; x++)
             {
-                var color = SKColors.DarkSlateGray;
+                var color = SKColors.White;
                 var pixel = new Vector2D(x, y);
                 if (pixel.Distance(circleCenter) <= Radius) color = SKColors.Crimson;
                 bitmap.SetPixel(x, y, color);

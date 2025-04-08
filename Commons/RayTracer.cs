@@ -23,12 +23,7 @@ public class RayTracer(List<IObject3D> sceneObjects, List<LightSource> lightSour
                 nearestIntersection = intersectionDistance;
                 var intersectionPoint = CalcHelper.IntersectionPoint(ray, intersectionDistance);
 
-                color = sceneObject switch
-                {
-                    ITriangleBased triangleBased => ColorTriangleBased(triangleBased, intersectionPoint),
-                    Sphere sphere => ColorSphere(sphere, intersectionPoint),
-                    _ => color
-                };
+                color = CalcColor(sceneObject, intersectionPoint);
                 color += sceneObject.Color * AmbientLight;
             }
         }
@@ -36,37 +31,18 @@ public class RayTracer(List<IObject3D> sceneObjects, List<LightSource> lightSour
         return color;
     }
 
-    private RgbColor ColorSphere(Sphere sphere, Vector3D intersectionPoint)
+    private RgbColor CalcColor(IObject3D sceneObject, Vector3D intersectionPoint)
     {
         var color = RgbColor.Black;
         foreach (var lightSource in LightSources)
         {
             var vectorToLightSource = (lightSource.Position - intersectionPoint).Normalize();
-            var intersectionPointIsInShadow = CheckRayIntersectionWithOtherObjects(vectorToLightSource, intersectionPoint, lightSource, sphere);
+            var intersectionPointIsInShadow = CheckRayIntersectionWithOtherObjects(vectorToLightSource, intersectionPoint, lightSource, sceneObject);
 
             if (!intersectionPointIsInShadow)
             {
-                var normalized = (intersectionPoint - sphere.Center).Normalize();
-                var colorFactor = Math.Max(0, normalized.ScalarProduct(vectorToLightSource));
-                color += sphere.Color * lightSource.Color * colorFactor * lightSource.Intensity;
-            }
-        }
-
-        return color;
-    }
-
-    private RgbColor ColorTriangleBased(ITriangleBased triangleBased, Vector3D intersectionPoint)
-    {
-        var color = RgbColor.Black;
-        foreach (var lightSource in LightSources)
-        {
-            var vectorToLightSource = (lightSource.Position - intersectionPoint).Normalize();
-            var intersectionPointIsInShadow = CheckRayIntersectionWithOtherObjects(vectorToLightSource, intersectionPoint, lightSource, triangleBased);
-
-            if (!intersectionPointIsInShadow)
-            {
-                var colorFactor = Math.Max(0, triangleBased.Normalized.ScalarProduct(vectorToLightSource));
-                color += triangleBased.Color * lightSource.Color * colorFactor * lightSource.Intensity;
+                var colorFactor = Math.Max(0, sceneObject.Normalized.ScalarProduct(vectorToLightSource));
+                color += sceneObject.Color * lightSource.Color * colorFactor * lightSource.Intensity;
             }
         }
 
@@ -76,8 +52,9 @@ public class RayTracer(List<IObject3D> sceneObjects, List<LightSource> lightSour
     private bool CheckRayIntersectionWithOtherObjects(Vector3D vectorToLightSource, Vector3D intersectionPoint, LightSource lightSource, IObject3D self)
     {
         var intersectionPointIsInShadow = false;
-        var rayToLightSource = new Ray(intersectionPoint + vectorToLightSource * MathConstants.Epsilon, vectorToLightSource);
         var distanceToLightSource = Math.Abs((intersectionPoint - lightSource.Position).Length);
+        var rayToLightSource = new Ray(intersectionPoint + vectorToLightSource * MathConstants.Epsilon, vectorToLightSource);
+        //var rayToLightSource = new Ray(Offset(intersectionPoint, self.Normalized), vectorToLightSource);
         foreach (var sceneObject in SceneObjects)
         {
             if (sceneObject == self && sceneObject is Sphere) continue; // TODO this is a workaround because sphere intersects itself at the moment
@@ -94,5 +71,28 @@ public class RayTracer(List<IObject3D> sceneObjects, List<LightSource> lightSour
         }
 
         return intersectionPointIsInShadow;
+    }
+
+    private Vector3D Offset(Vector3D location, Vector3D normal) // TODO doesnt work correctly
+    {
+        var normalMultiplier = 256.0f;
+        var minDistance = 1 / 32; // if value is smaller than this, precision needs to be handled
+        var precisionOffset = 1 / ushort.MaxValue; // offset value to handle errors in precision if value is smaller than minDistance
+
+        // multiply normal to get it to a scale that works for the calculations
+        var offset = new Vector3D(normal.X * normalMultiplier, normal.Y * normalMultiplier, normal.Z * normalMultiplier);
+
+        // add or subtract offset value depending on location being positive or negative
+        var locationWithOffset = new Vector3D(
+            location.X + (location.X < 0 ? -offset.X : offset.X),
+            location.Y + (location.Y < 0 ? -offset.Y : offset.Y),
+            location.Z + (location.Z < 0 ? -offset.Z : offset.Z)
+        );
+
+        return new Vector3D(
+            Math.Abs(location.X) < minDistance ? location.X + precisionOffset * normal.X : locationWithOffset.X,
+            Math.Abs(location.Y) < minDistance ? location.Y + precisionOffset * normal.Y : locationWithOffset.Y,
+            Math.Abs(location.Z) < minDistance ? location.Z + precisionOffset * normal.Z : locationWithOffset.Z
+        );
     }
 }

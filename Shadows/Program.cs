@@ -25,7 +25,7 @@ internal static class Program
     private static readonly List<LightSource> LightSources =
     [
         new(
-            new Vector3D(400, 0, -250),
+            new Vector3D(400, 0, -600),
             new RgbColor(0.5, 0.5, 0.5),
             1
         ),

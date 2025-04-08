@@ -1,6 +1,6 @@
 ﻿namespace Commons._3D;
 
-public class Triangle : ITriangleBased
+public class Triangle : IObject3D
 {
     public Triangle(Vector3D a, Vector3D b, Vector3D c, RgbColor color)
     {
@@ -19,7 +19,7 @@ public class Triangle : ITriangleBased
     public Vector3D B { get; }
     public Vector3D C { get; }
     public RgbColor Color { get; }
-    public Vector3D Normalized { get; }
+    public Vector3D Normalized { get; set; }
 
     public (bool hasHit, double intersectionDistance) NextIntersection(Ray ray)
     {

@@ -5,6 +5,7 @@ public class Sphere(Vector3D center, int radius, RgbColor color) : IObject3D
     public Vector3D Center => center;
     public int Radius => radius;
     public RgbColor Color => color;
+    public Vector3D Normalized { get; set; } = new(0, 0, 0);
 
     public (bool hasHit, double intersectionDistance) NextIntersection(Ray ray)
     {
@@ -23,6 +24,10 @@ public class Sphere(Vector3D center, int radius, RgbColor color) : IObject3D
         var x1 = (-b + Math.Sqrt(discriminant)) / (2 * a);
         var x2 = (-b - Math.Sqrt(discriminant)) / (2 * a);
 
-        return (true, x1 < x2 ? x1 : x2);
+        var intersectionDistance = x1 < x2 ? x1 : x2;
+
+        Normalized = (ray.Origin + ray.Direction * intersectionDistance - Center).Normalize();
+
+        return (true, intersectionDistance);
     }
 }

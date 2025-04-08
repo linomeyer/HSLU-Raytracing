@@ -1,6 +1,6 @@
 ﻿namespace Commons._3D;
 
-public class Cube : ITriangleBased
+public class Cube : IObject3D
 {
     private readonly List<Triangle> _cubeFaces;
     private Vector3D _normalVector;
@@ -17,10 +17,9 @@ public class Cube : ITriangleBased
 
     public Vector3D Center { get; }
     public double Size { get; }
-    public RgbColor Color { get; }
     public double Rotation { get; }
-
-    public Vector3D Normalized => _normalVector != null ? _normalVector : throw new NullReferenceException();
+    public RgbColor Color { get; }
+    public Vector3D Normalized { get; set; }
 
     public (bool hasHit, double intersectionDistance) NextIntersection(Ray ray)
     {

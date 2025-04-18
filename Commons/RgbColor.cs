@@ -16,7 +16,7 @@ public class RgbColor(double r, double g, double b)
     public static RgbColor Orange => new(1, 0.5, 0);
     public static RgbColor Black => new(0, 0, 0);
     public static RgbColor Green => new(0, 1, 0);
-    public static RgbColor Red => new(1, 0, 0);
+    public static RgbColor Red => new(1, 0.1, 0.1);
     public static RgbColor White => new(1, 1, 1);
     public static RgbColor Cyan => new(0, 1, 0.5);
     public static RgbColor Blue => new(0, 0, 1);

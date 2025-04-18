@@ -22,6 +22,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shadows", "Shadows\Shadows.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cube", "Cube\Cube.csproj", "{75DA1DB9-C40D-44FD-AE1F-056DFE43D726}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reflection", "Reflection\Reflection.csproj", "{B64A1860-97E9-4D00-9FF9-0C2387B336CB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -72,5 +74,9 @@ Global
 		{75DA1DB9-C40D-44FD-AE1F-056DFE43D726}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{75DA1DB9-C40D-44FD-AE1F-056DFE43D726}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{75DA1DB9-C40D-44FD-AE1F-056DFE43D726}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B64A1860-97E9-4D00-9FF9-0C2387B336CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B64A1860-97E9-4D00-9FF9-0C2387B336CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B64A1860-97E9-4D00-9FF9-0C2387B336CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B64A1860-97E9-4D00-9FF9-0C2387B336CB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

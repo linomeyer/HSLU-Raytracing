@@ -1,27 +1,28 @@
 ﻿using Commons;
 using Commons._3D;
 using Commons.Lighting;
+using Commons.Materials;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Shadows;
+namespace Reflection;
 
 internal static class Program
 {
     private const int Width = 800;
     private const int Height = 600;
     private const int Depth = 600;
-    private const string FilePath = ImageHandler.ImageFolderPath + "shadows.png";
+    private const string FilePath = ImageHandler.ImageFolderPath + "reflection.png";
 
     private static readonly List<IObject3D> Objects3D =
     [
-        new Triangle(new Vector3D(0, 600, 600), new Vector3D(800, 600, 600), new Vector3D(0, 0, 600), RgbColor.Blue),
+        new Triangle(new Vector3D(0, 600, 600), new Vector3D(800, 600, 600), new Vector3D(0, 0, 600), MaterialFactory.Create(MaterialType.Chrome)),
 
-        new Triangle(new Vector3D(430, 540, 400), new Vector3D(500, 300, 400), new Vector3D(300, 500, 400), RgbColor.Orange),
-        new Triangle(new Vector3D(598, 414, 0), new Vector3D(723, 371, 255), new Vector3D(554, 589, 192), RgbColor.Red),
-        new Cube(new Vector3D(400, 250, 200), 150, RgbColor.Red, 30),
+        new Triangle(new Vector3D(430, 540, 400), new Vector3D(500, 300, 400), new Vector3D(300, 500, 400), MaterialFactory.Create(MaterialType.Copper)),
+        new Cube(new Vector3D(600, 400, 100), 100, MaterialFactory.Create(MaterialType.Gold), 30),
 
-        new Sphere(new Vector3D(150, 150, 200), 100, RgbColor.Green)
+        new Cube(new Vector3D(400, 250, 200), 150, MaterialFactory.Create(MaterialType.RedRubber), 30),
+        new Sphere(new Vector3D(150, 150, 200), 100, MaterialFactory.Create(MaterialType.Jade))
     ];
 
     private static readonly List<LightSource> LightSources =
@@ -37,8 +38,6 @@ internal static class Program
             0.8
         )
     ];
-
-    private static readonly Sphere Sphere = new(new Vector3D(650, 150, 300), 100, RgbColor.Green);
 
     private static void Main()
     {

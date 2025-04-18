@@ -1,24 +1,25 @@
-﻿namespace Commons._3D;
+﻿using Commons.Materials;
+
+namespace Commons._3D;
 
 public class Triangle : IObject3D
 {
-    public Triangle(Vector3D a, Vector3D b, Vector3D c, RgbColor color)
+    public Triangle(Vector3D a, Vector3D b, Vector3D c, Material material)
     {
         A = a;
         B = b;
         C = c;
-        Color = color;
+        Material = material;
 
         var v = b - a;
         var w = c - a;
-
         Normalized = v.CrossProduct(w).Normalize();
     }
 
     public Vector3D A { get; }
     public Vector3D B { get; }
     public Vector3D C { get; }
-    public RgbColor Color { get; }
+    public Material Material { get; }
     public Vector3D Normalized { get; set; }
 
     public (bool hasHit, double intersectionDistance) NextIntersection(Ray ray)

@@ -8,8 +8,6 @@ public class RayTracer(List<IObject3D> sceneObjects, List<LightSource> lightSour
     public List<IObject3D> SceneObjects => sceneObjects;
     public List<LightSource> LightSources => lightSources;
 
-    private static RgbColor AmbientLight => new(0.1, 0.1, 0.1);
-
     public RgbColor CalcRay(Ray ray)
     {
         var nearestIntersection = double.MaxValue;
@@ -24,7 +22,7 @@ public class RayTracer(List<IObject3D> sceneObjects, List<LightSource> lightSour
                 var intersectionPoint = CalcHelper.IntersectionPoint(ray, intersectionDistance);
 
                 color = CalcColor(sceneObject, intersectionPoint);
-                color += sceneObject.Color * AmbientLight;
+                //color += sceneObject.Color * AmbientLight;
             }
         }
 
@@ -33,7 +31,7 @@ public class RayTracer(List<IObject3D> sceneObjects, List<LightSource> lightSour
 
     private RgbColor CalcColor(IObject3D sceneObject, Vector3D intersectionPoint)
     {
-        var color = RgbColor.Black;
+        var color = new RgbColor(sceneObject.Material.Ambient.R, sceneObject.Material.Ambient.G, sceneObject.Material.Ambient.B);
         foreach (var lightSource in LightSources)
         {
             var vectorToLightSource = (lightSource.Position - intersectionPoint).Normalize();
@@ -42,7 +40,7 @@ public class RayTracer(List<IObject3D> sceneObjects, List<LightSource> lightSour
             if (!intersectionPointIsInShadow)
             {
                 var colorFactor = Math.Max(0, sceneObject.Normalized.ScalarProduct(vectorToLightSource));
-                color += sceneObject.Color * lightSource.Color * colorFactor * lightSource.Intensity;
+                color += sceneObject.Material.Diffuse * lightSource.Color * colorFactor * lightSource.Intensity * (1.0 / LightSources.Count);
             }
         }
 
@@ -54,7 +52,7 @@ public class RayTracer(List<IObject3D> sceneObjects, List<LightSource> lightSour
         var intersectionPointIsInShadow = false;
         var distanceToLightSource = Math.Abs((intersectionPoint - lightSource.Position).Length);
         var rayToLightSource = new Ray(intersectionPoint + vectorToLightSource * MathConstants.Epsilon, vectorToLightSource);
-        //var rayToLightSource = new Ray(Offset(intersectionPoint, self.Normalized), vectorToLightSource);
+        // var rayToLightSource = new Ray(Offset(intersectionPoint, self.Normalized), vectorToLightSource);
         foreach (var sceneObject in SceneObjects)
         {
             if (sceneObject == self && sceneObject is Sphere) continue; // TODO this is a workaround because sphere intersects itself at the moment

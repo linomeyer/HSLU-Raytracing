@@ -1,10 +1,12 @@
-﻿namespace Commons._3D;
+﻿using Commons.Materials;
 
-public class Sphere(Vector3D center, int radius, RgbColor color) : IObject3D
+namespace Commons._3D;
+
+public class Sphere(Vector3D center, int radius, Material material) : IObject3D
 {
     public Vector3D Center => center;
     public int Radius => radius;
-    public RgbColor Color => color;
+    public Material Material => material;
     public Vector3D Normalized { get; set; } = new(0, 0, 0);
 
     public (bool hasHit, double intersectionDistance) NextIntersection(Ray ray)

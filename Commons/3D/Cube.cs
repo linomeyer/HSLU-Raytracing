@@ -1,38 +1,39 @@
-﻿namespace Commons._3D;
+﻿using Commons.Materials;
+
+namespace Commons._3D;
 
 public class Cube : IObject3D
 {
     private readonly List<Triangle> _cubeFaces;
-    private Vector3D _normalVector;
 
-    public Cube(Vector3D center, double size, RgbColor color, double rotation = 0)
+    public Cube(Vector3D center, double size, Material material, double rotation = 0)
     {
         Center = center;
         Size = size;
         Rotation = rotation;
-        Color = color;
-
+        Material = material;
         _cubeFaces = CreateCube();
     }
 
     public Vector3D Center { get; }
     public double Size { get; }
     public double Rotation { get; }
-    public RgbColor Color { get; }
-    public Vector3D Normalized { get; set; }
+    public Material Material { get; }
+
+    public Vector3D Normalized { get; set; } = new(0, 0, 0);
 
     public (bool hasHit, double intersectionDistance) NextIntersection(Ray ray)
     {
         var hasHit = false;
-        var minDistance = double.MinValue;
+        var minDistance = double.MaxValue;
         foreach (var plane in _cubeFaces)
         {
             var (hasHitPlane, intersectionDistance) = plane.NextIntersection(ray);
-            if (hasHitPlane && intersectionDistance > minDistance)
+            if (hasHitPlane && intersectionDistance < minDistance)
             {
                 hasHit = true;
                 minDistance = intersectionDistance;
-                _normalVector = plane.Normalized;
+                Normalized = plane.Normalized * -1;
             }
         }
 
@@ -47,23 +48,23 @@ public class Cube : IObject3D
         var cube = new List<Triangle>
         {
             // Front
-            new(edges[0], edges[1], edges[2], Color),
-            new(edges[0], edges[2], edges[3], Color),
+            new(edges[0], edges[1], edges[2], Material),
+            new(edges[0], edges[2], edges[3], Material),
             // Back
-            new(edges[4], edges[6], edges[5], Color),
-            new(edges[4], edges[7], edges[6], Color),
+            new(edges[4], edges[6], edges[5], Material),
+            new(edges[4], edges[7], edges[6], Material),
             // Left
-            new(edges[0], edges[3], edges[7], Color),
-            new(edges[0], edges[7], edges[4], Color),
+            new(edges[0], edges[3], edges[7], Material),
+            new(edges[0], edges[7], edges[4], Material),
             // Right
-            new(edges[1], edges[5], edges[6], Color),
-            new(edges[1], edges[6], edges[2], Color),
+            new(edges[1], edges[5], edges[6], Material),
+            new(edges[1], edges[6], edges[2], Material),
             // Bottom
-            new(edges[0], edges[4], edges[5], Color),
-            new(edges[0], edges[5], edges[1], Color),
+            new(edges[0], edges[4], edges[5], Material),
+            new(edges[0], edges[5], edges[1], Material),
             // Top
-            new(edges[3], edges[2], edges[6], Color),
-            new(edges[3], edges[6], edges[7], Color)
+            new(edges[3], edges[2], edges[6], Material),
+            new(edges[3], edges[6], edges[7], Material)
         };
 
         return cube;

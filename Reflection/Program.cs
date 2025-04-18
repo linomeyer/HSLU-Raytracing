@@ -16,13 +16,13 @@ internal static class Program
 
     private static readonly List<IObject3D> Objects3D =
     [
-        new Triangle(new Vector3D(0, 600, 600), new Vector3D(800, 600, 600), new Vector3D(0, 0, 600), MaterialFactory.Create(MaterialType.Chrome)),
+        new Triangle(new Vector3D(0, 600, 600), new Vector3D(800, 600, 600), new Vector3D(0, 0, 600), MaterialFactory.Create(MaterialType.Chrome, 0)),
 
-        new Triangle(new Vector3D(430, 540, 400), new Vector3D(500, 300, 400), new Vector3D(300, 500, 400), MaterialFactory.Create(MaterialType.Copper)),
-        new Cube(new Vector3D(600, 400, 100), 100, MaterialFactory.Create(MaterialType.Gold), 30),
+        new Triangle(new Vector3D(430, 540, 400), new Vector3D(500, 300, 400), new Vector3D(300, 500, 400), MaterialFactory.Create(MaterialType.Copper, 0)),
+        new Cube(new Vector3D(600, 400, 100), 100, MaterialFactory.Create(MaterialType.Gold, 0), 30),
 
-        new Cube(new Vector3D(400, 250, 200), 150, MaterialFactory.Create(MaterialType.RedRubber), 30),
-        new Sphere(new Vector3D(150, 150, 200), 100, MaterialFactory.Create(MaterialType.Jade))
+        new Cube(new Vector3D(400, 250, 200), 150, MaterialFactory.Create(MaterialType.RedRubber, 0), 30),
+        new Sphere(new Vector3D(150, 150, 200), 100, MaterialFactory.Create(MaterialType.Jade, 0))
     ];
 
     private static readonly List<LightSource> LightSources =

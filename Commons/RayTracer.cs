@@ -3,12 +3,15 @@ using Commons.Lighting;
 
 namespace Commons;
 
-public class RayTracer(List<IObject3D> sceneObjects, List<LightSource> lightSources)
+public class RayTracer(List<IObject3D> sceneObjects, List<LightSource> lightSources, int maxDepth = 10)
 {
+    private int _maxDepth = maxDepth;
     public List<IObject3D> SceneObjects => sceneObjects;
     public List<LightSource> LightSources => lightSources;
 
-    public RgbColor CalcRay(Ray ray)
+    public RgbColor CalcRay(Ray ray) => CalcRay(ray, 0);
+
+    private RgbColor CalcRay(Ray ray, int depth)
     {
         var nearestIntersection = double.MaxValue;
         var color = RgbColor.Black;
@@ -21,7 +24,7 @@ public class RayTracer(List<IObject3D> sceneObjects, List<LightSource> lightSour
                 nearestIntersection = intersectionDistance;
                 var intersectionPoint = CalcHelper.IntersectionPoint(ray, intersectionDistance);
 
-                color = CalcColor(sceneObject, intersectionPoint);
+                color = CalcColor(ray, sceneObject, intersectionPoint, depth);
                 //color += sceneObject.Color * AmbientLight;
             }
         }
@@ -29,7 +32,7 @@ public class RayTracer(List<IObject3D> sceneObjects, List<LightSource> lightSour
         return color;
     }
 
-    private RgbColor CalcColor(IObject3D sceneObject, Vector3D intersectionPoint)
+    private RgbColor CalcColor(Ray ray, IObject3D sceneObject, Vector3D intersectionPoint, int currentDepth)
     {
         var color = new RgbColor(sceneObject.Material.Ambient.R, sceneObject.Material.Ambient.G, sceneObject.Material.Ambient.B);
         foreach (var lightSource in LightSources)
@@ -44,6 +47,16 @@ public class RayTracer(List<IObject3D> sceneObjects, List<LightSource> lightSour
             }
         }
 
+        if (sceneObject.Material.Reflectivity > 0 && currentDepth < maxDepth)
+        {
+            var reflectionDirection = CalcReflectionDir(ray.Direction, sceneObject);
+            var reflectionRay = new Ray(intersectionPoint, reflectionDirection);
+
+            var reflectionColor = CalcRay(reflectionRay, currentDepth + 1);
+
+            color = color * (1 - sceneObject.Material.Reflectivity) + reflectionColor * sceneObject.Material.Reflectivity;
+        }
+
         return color;
     }
 
@@ -51,6 +64,7 @@ public class RayTracer(List<IObject3D> sceneObjects, List<LightSource> lightSour
     {
         var intersectionPointIsInShadow = false;
         var distanceToLightSource = Math.Abs((intersectionPoint - lightSource.Position).Length);
+
         var rayToLightSource = new Ray(intersectionPoint + vectorToLightSource * MathConstants.Epsilon, vectorToLightSource);
         // var rayToLightSource = new Ray(Offset(intersectionPoint, self.Normalized), vectorToLightSource);
         foreach (var sceneObject in SceneObjects)
@@ -70,6 +84,8 @@ public class RayTracer(List<IObject3D> sceneObjects, List<LightSource> lightSour
 
         return intersectionPointIsInShadow;
     }
+
+    private Vector3D CalcReflectionDir(Vector3D direction, IObject3D self) => direction - self.Normalized * (2 * direction.ScalarProduct(self.Normalized));
 
     private Vector3D Offset(Vector3D location, Vector3D normal) // TODO doesnt work correctly
     {

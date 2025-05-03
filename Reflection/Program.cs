@@ -16,13 +16,15 @@ internal static class Program
 
     private static readonly List<IObject3D> Objects3D =
     [
-        new Triangle(new Vector3D(0, 600, 600), new Vector3D(800, 600, 600), new Vector3D(0, 0, 600), MaterialFactory.Create(MaterialType.Chrome, 0)),
-
-        new Triangle(new Vector3D(430, 540, 400), new Vector3D(500, 300, 400), new Vector3D(300, 500, 400), MaterialFactory.Create(MaterialType.Copper, 0)),
-        new Cube(new Vector3D(600, 400, 100), 100, MaterialFactory.Create(MaterialType.Gold, 0), 30),
-
-        new Cube(new Vector3D(400, 250, 200), 150, MaterialFactory.Create(MaterialType.RedRubber, 0), 30),
-        new Sphere(new Vector3D(150, 150, 200), 100, MaterialFactory.Create(MaterialType.Jade, 0))
+        new Sphere(new Vector3D(150, 475, 200), 100, MaterialFactory.Create(MaterialType.Jade, 0)),
+        new Cube(new Vector3D(400, 500, 200), 100, MaterialFactory.Create(MaterialType.Copper, 0.9), 30),
+        new Sphere(new Vector3D(650, 475, 200), 100, MaterialFactory.Create(MaterialType.Jade, 0.9)),
+        //floor
+        new Triangle(new Vector3D(0, 600, 40), new Vector3D(800, 600, 40), new Vector3D(0, 500, 600), MaterialFactory.Create(MaterialType.Chrome, 0)),
+        new Triangle(new Vector3D(800, 600, 40), new Vector3D(600, 500, 600), new Vector3D(0, 500, 600), MaterialFactory.Create(MaterialType.Chrome, 0))
+        //walls
+        //new Triangle(new Vector3D(0, 600, 40), new Vector3D(0, 0, 40), new Vector3D(40, 0, 600), MaterialFactory.Create(MaterialType.Chrome, 0)),
+        //new Triangle(new Vector3D(800, 600, 40), new Vector3D(800, 0, 40), new Vector3D(760, 0, 600), MaterialFactory.Create(MaterialType.Chrome, 0))
     ];
 
     private static readonly List<LightSource> LightSources =
@@ -52,7 +54,12 @@ internal static class Program
         for (var y = 0; y < Height; y++)
             for (var x = 0; x < Width; x++)
             {
-                var rayIntoScreen = new Ray(new Vector3D(x, y, 0), new Vector3D(0, 0, 1));
+                var origin = new Vector3D(x, y, 0);
+                var focus = new Vector3D(Width / 2, 599, -1200);
+                var direction = origin - focus;
+                var rayIntoScreen = new Ray(origin, direction);
+
+
                 var color = rayTracer.CalcRay(rayIntoScreen);
                 image[x, y] = color.ConvertToRgba32();
             }

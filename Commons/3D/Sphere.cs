@@ -26,7 +26,12 @@ public class Sphere(Vector3D center, int radius, Material material) : IObject3D
         var x1 = (-b + Math.Sqrt(discriminant)) / (2 * a);
         var x2 = (-b - Math.Sqrt(discriminant)) / (2 * a);
 
+
         var intersectionDistance = x1 < x2 ? x1 : x2;
+
+        // workaround for catching self intersection
+        if (intersectionDistance is < MathConstants.Epsilon)
+            return (false, double.MaxValue);
 
         Normalized = (ray.Origin + ray.Direction * intersectionDistance - Center).Normalize();
 

@@ -3,9 +3,8 @@ using Commons.Lighting;
 
 namespace Commons;
 
-public class RayTracer(List<IObject3D> sceneObjects, List<LightSource> lightSources, int maxDepth = 10)
+public class RayTracer(List<IObject3D> sceneObjects, List<LightSource> lightSources, int maxDepth = 6)
 {
-    private int _maxDepth = maxDepth;
     public List<IObject3D> SceneObjects => sceneObjects;
     public List<LightSource> LightSources => lightSources;
 
@@ -25,7 +24,6 @@ public class RayTracer(List<IObject3D> sceneObjects, List<LightSource> lightSour
                 var intersectionPoint = CalcHelper.IntersectionPoint(ray, intersectionDistance);
 
                 color = CalcColor(ray, sceneObject, intersectionPoint, depth);
-                //color += sceneObject.Color * AmbientLight;
             }
         }
 
@@ -40,17 +38,14 @@ public class RayTracer(List<IObject3D> sceneObjects, List<LightSource> lightSour
             var vectorToLightSource = (lightSource.Position - intersectionPoint).Normalize();
             var intersectionPointIsInShadow = CheckRayIntersectionWithOtherObjects(vectorToLightSource, intersectionPoint, lightSource, sceneObject);
 
-            if (!intersectionPointIsInShadow)
-            {
-                var colorFactor = Math.Max(0, sceneObject.Normalized.ScalarProduct(vectorToLightSource));
-                color += sceneObject.Material.Diffuse * lightSource.Color * colorFactor * lightSource.Intensity * (1.0 / LightSources.Count);
-            }
+            if (!intersectionPointIsInShadow) color += AddDiffuseColoring(sceneObject, lightSource, vectorToLightSource);
+            //color += AddSpecularColoring(sceneObject, lightSource, vectorToLightSource, ray);
         }
 
         if (sceneObject.Material.Reflectivity > 0 && currentDepth < maxDepth)
         {
             var reflectionDirection = CalcReflectionDir(ray.Direction, sceneObject);
-            var reflectionRay = new Ray(intersectionPoint, reflectionDirection);
+            var reflectionRay = new Ray(intersectionPoint + reflectionDirection * MathConstants.Epsilon, reflectionDirection);
 
             var reflectionColor = CalcRay(reflectionRay, currentDepth + 1);
 
@@ -58,6 +53,29 @@ public class RayTracer(List<IObject3D> sceneObjects, List<LightSource> lightSour
         }
 
         return color;
+    }
+
+    private RgbColor AddSpecularColoring(IObject3D sceneObject, LightSource lightSource, Vector3D vectorToLightSource, Ray ray)
+    {
+        if (sceneObject.Material.Shininess > 0)
+        {
+            var lightIntensity = lightSource.Intensity * (1.0 / LightSources.Count);
+            var reflection = CalcReflectionDir(-vectorToLightSource, sceneObject);
+            var specularExponent = sceneObject.Material.Shininess * MathConstants.ShininessMultiplier;
+            var shininessFactor = Math.Pow(Math.Max(0, reflection.ScalarProduct(-ray.Direction)), specularExponent);
+
+            return sceneObject.Material.Specular * lightIntensity * shininessFactor;
+        }
+
+        return new RgbColor(0, 0, 0);
+    }
+
+    private RgbColor AddDiffuseColoring(IObject3D sceneObject, LightSource lightSource, Vector3D vectorToLightSource)
+    {
+        var lightIntensity = lightSource.Intensity * (1.0 / LightSources.Count);
+        var colorFactor = Math.Max(0, sceneObject.Normalized.ScalarProduct(vectorToLightSource));
+
+        return sceneObject.Material.Diffuse * lightSource.Color * colorFactor * lightIntensity;
     }
 
     private bool CheckRayIntersectionWithOtherObjects(Vector3D vectorToLightSource, Vector3D intersectionPoint, LightSource lightSource, IObject3D self)

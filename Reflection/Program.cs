@@ -12,13 +12,13 @@ internal static class Program
     private const int Width = 800;
     private const int Height = 600;
     private const int Depth = 600;
-    private const string FilePath = ImageHandler.ImageFolderPath + "reflection.png";
+    private const string FilePath = ImageHandler.ImageFolderPath + "phong_reflection.png";
 
     private static readonly List<IObject3D> Objects3D =
     [
-        new Sphere(new Vector3D(150, 475, 200), 100, MaterialFactory.Create(MaterialType.Jade, 0)),
-        new Cube(new Vector3D(400, 500, 200), 100, MaterialFactory.Create(MaterialType.Copper, 0.9), 30),
-        new Sphere(new Vector3D(650, 475, 200), 100, MaterialFactory.Create(MaterialType.Jade, 0.9)),
+        new Sphere(new Vector3D(150, 475, 200), 100, MaterialFactory.Create(MaterialType.Gold, 0)),
+        new Cube(new Vector3D(400, 500, 200), 100, MaterialFactory.Create(MaterialType.Gold, 0), 30),
+        new Sphere(new Vector3D(650, 475, 200), 100, MaterialFactory.Create(MaterialType.Gold, 0)),
         //floor
         new Triangle(new Vector3D(0, 600, 40), new Vector3D(800, 600, 40), new Vector3D(0, 500, 600), MaterialFactory.Create(MaterialType.Chrome, 0)),
         new Triangle(new Vector3D(800, 600, 40), new Vector3D(600, 500, 600), new Vector3D(0, 500, 600), MaterialFactory.Create(MaterialType.Chrome, 0))

@@ -38,8 +38,11 @@ public class RayTracer(List<IObject3D> sceneObjects, List<LightSource> lightSour
             var vectorToLightSource = (lightSource.Position - intersectionPoint).Normalize();
             var intersectionPointIsInShadow = CheckRayIntersectionWithOtherObjects(vectorToLightSource, intersectionPoint, lightSource, sceneObject);
 
-            if (!intersectionPointIsInShadow) color += AddDiffuseColoring(sceneObject, lightSource, vectorToLightSource);
-            //color += AddSpecularColoring(sceneObject, lightSource, vectorToLightSource, ray);
+            if (!intersectionPointIsInShadow)
+            {
+                color += AddDiffuseColoring(sceneObject, lightSource, vectorToLightSource);
+                color += AddSpecularColoring(sceneObject, lightSource, vectorToLightSource, ray);
+            }
         }
 
         if (sceneObject.Material.Reflectivity > 0 && currentDepth < maxDepth)
@@ -62,7 +65,7 @@ public class RayTracer(List<IObject3D> sceneObjects, List<LightSource> lightSour
             var lightIntensity = lightSource.Intensity * (1.0 / LightSources.Count);
             var reflection = CalcReflectionDir(-vectorToLightSource, sceneObject);
             var specularExponent = sceneObject.Material.Shininess * MathConstants.ShininessMultiplier;
-            var shininessFactor = Math.Pow(Math.Max(0, reflection.ScalarProduct(-ray.Direction)), specularExponent);
+            var shininessFactor = Math.Pow(Math.Max(0, reflection.ScalarProduct(-ray.Direction.Normalize())), specularExponent);
 
             return sceneObject.Material.Specular * lightIntensity * shininessFactor;
         }

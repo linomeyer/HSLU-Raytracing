@@ -1,6 +1,13 @@
 ﻿namespace Commons.Materials;
 
-public class Material(MaterialType type, RgbColor ambient, RgbColor diffuse, RgbColor specular, double shininess, double reflectivity)
+public class Material(
+    MaterialType type,
+    RgbColor ambient,
+    RgbColor diffuse,
+    RgbColor specular,
+    double shininess,
+    double reflectivity = 0,
+    double transparency = 0)
 {
     public MaterialType Name => type;
     public RgbColor Ambient => ambient;
@@ -8,4 +15,5 @@ public class Material(MaterialType type, RgbColor ambient, RgbColor diffuse, Rgb
     public RgbColor Specular => specular;
     public double Shininess => shininess;
     public double Reflectivity => reflectivity;
+    public double Transparency => transparency;
 }

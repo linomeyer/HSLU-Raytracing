@@ -55,6 +55,14 @@ public class RayTracer(List<IObject3D> sceneObjects, List<LightSource> lightSour
             color = color * (1 - sceneObject.Material.Reflectivity) + reflectionColor * sceneObject.Material.Reflectivity;
         }
 
+        if (sceneObject.Material.Reflectivity > 0 && currentDepth < maxDepth)
+        {
+            var rayOfIntersection = new Ray(intersectionPoint, ray.Direction);
+            var refractionColor = CalcRay(rayOfIntersection, currentDepth + 1);
+            var transparency = sceneObject.Material.Transparency;
+            color = color * (1 - transparency) + refractionColor * transparency;
+        }
+
         return color;
     }
 

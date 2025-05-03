@@ -16,9 +16,9 @@ internal static class Program
 
     private static readonly List<IObject3D> Objects3D =
     [
-        new Sphere(new Vector3D(150, 475, 200), 100, MaterialFactory.Create(MaterialType.Gold, 0)),
-        new Cube(new Vector3D(400, 500, 200), 100, MaterialFactory.Create(MaterialType.Gold, 0), 30),
-        new Sphere(new Vector3D(650, 475, 200), 100, MaterialFactory.Create(MaterialType.Gold, 0)),
+        new Sphere(new Vector3D(150, 475, 200), 100, MaterialFactory.Create(MaterialType.Gold, 0.5)),
+        new Cube(new Vector3D(400, 450, 400), 100, MaterialFactory.Create(MaterialType.Bronze, 0), 30),
+        new Sphere(new Vector3D(650, 475, 200), 100, MaterialFactory.Create(MaterialType.Gold, 0.4)),
         //floor
         new Triangle(new Vector3D(0, 600, 40), new Vector3D(800, 600, 40), new Vector3D(0, 500, 600), MaterialFactory.Create(MaterialType.Chrome, 0)),
         new Triangle(new Vector3D(800, 600, 40), new Vector3D(600, 500, 600), new Vector3D(0, 500, 600), MaterialFactory.Create(MaterialType.Chrome, 0))

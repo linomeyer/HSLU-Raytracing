@@ -55,10 +55,10 @@ public class RayTracer(List<IObject3D> sceneObjects, List<LightSource> lightSour
             color = color * (1 - sceneObject.Material.Reflectivity) + reflectionColor * sceneObject.Material.Reflectivity;
         }
 
-        if (sceneObject.Material.Reflectivity > 0 && currentDepth < maxDepth)
+        if (sceneObject.Material.Transparency > 0 && currentDepth < maxDepth)
         {
-            var rayOfIntersection = new Ray(intersectionPoint, ray.Direction);
-            var refractionColor = CalcRay(rayOfIntersection, currentDepth + 1);
+            var refractionRay = new Ray(intersectionPoint + ray.Direction * 0.01, ray.Direction);
+            var refractionColor = CalcRay(refractionRay, currentDepth + 1);
             var transparency = sceneObject.Material.Transparency;
             color = color * (1 - transparency) + refractionColor * transparency;
         }
@@ -71,9 +71,9 @@ public class RayTracer(List<IObject3D> sceneObjects, List<LightSource> lightSour
         if (sceneObject.Material.Shininess > 0)
         {
             var lightIntensity = lightSource.Intensity * (1.0 / LightSources.Count);
-            var reflection = CalcReflectionDir(-vectorToLightSource, sceneObject);
+            var reflection = CalcReflectionDir(vectorToLightSource, sceneObject);
             var specularExponent = sceneObject.Material.Shininess * MathConstants.ShininessMultiplier;
-            var shininessFactor = Math.Pow(Math.Max(0, reflection.ScalarProduct(-ray.Direction.Normalize())), specularExponent);
+            var shininessFactor = Math.Pow(Math.Max(0, reflection.ScalarProduct(ray.Direction.Normalize())), specularExponent);
 
             return sceneObject.Material.Specular * lightIntensity * shininessFactor;
         }
@@ -98,7 +98,7 @@ public class RayTracer(List<IObject3D> sceneObjects, List<LightSource> lightSour
         // var rayToLightSource = new Ray(Offset(intersectionPoint, self.Normalized), vectorToLightSource);
         foreach (var sceneObject in SceneObjects)
         {
-            if (sceneObject == self && sceneObject is Sphere) continue; // TODO this is a workaround because sphere intersects itself at the moment
+            //if (sceneObject == self && sceneObject is Sphere) continue; // TODO this is a workaround because sphere intersects itself at the moment
 
             var (hasHit, intersectionDistance) = sceneObject.NextIntersection(rayToLightSource);
 

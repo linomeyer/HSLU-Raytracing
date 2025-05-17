@@ -5,27 +5,28 @@ using Commons.Materials;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Reflection;
+namespace Final;
 
 internal static class Program
 {
     private const int Width = 800;
     private const int Height = 600;
     private const int Depth = 600;
-    private const string FilePath = ImageHandler.ImageFolderPath + "transparency.png";
+    private const string FilePath = ImageHandler.ImageFolderPath + "test.png";
 
     private static readonly List<IObject3D> Objects3D =
     [
         new Sphere(new Vector3D(150, 475, 200), 100, MaterialFactory.Create(MaterialType.Gold, 0.5)),
-        new Cube(new Vector3D(400, 200, 150), 200, MaterialFactory.Create(MaterialType.Emerald, 0, 0.8), 30),
-        new Sphere(new Vector3D(600, 200, 500), 80, MaterialFactory.Create(MaterialType.Bronze)),
+        new Cube(new Vector3D(430, 250, 150), 150, MaterialFactory.Create(MaterialType.Emerald, 0.2, 0.8), 30),
+        new Sphere(new Vector3D(600, 200, 500), 80, MaterialFactory.Create(MaterialType.Bronze, 0.3)),
         new Sphere(new Vector3D(650, 475, 200), 100, MaterialFactory.Create(MaterialType.Gold, 0.4)),
+        new Sphere(new Vector3D(400, 430, 150), 90, MaterialFactory.Create(MaterialType.Pearl, 0.6, 0.4)),
         //floor
         new Triangle(new Vector3D(-1000, 600, 40), new Vector3D(1800, 600, 40), new Vector3D(-1000, 500, 600),
             MaterialFactory.Create(MaterialType.Obsidian, 0.3)),
         new Triangle(new Vector3D(1800, 600, 40), new Vector3D(1800, 500, 600), new Vector3D(-1000, 500, 600),
             MaterialFactory.Create(MaterialType.Obsidian, 0.3)),
-        /*//walls
+        //walls
         //left
         new Plane(new Vector3D(-100, -300, 0), new Vector3D(200, 1000, 1000), MaterialFactory.Create(MaterialType.Turquoise)),
         //right
@@ -34,12 +35,12 @@ internal static class Program
         new Triangle(new Vector3D(-100, -300, 0), new Vector3D(-100, -200, 1000), new Vector3D(900, -300, 0),
             MaterialFactory.Create(MaterialType.Chrome)),
         new Triangle(new Vector3D(900, -200, 1000), new Vector3D(-100, -200, 1000), new Vector3D(900, -300, 0),
-            MaterialFactory.Create(MaterialType.Chrome)),*/
+            MaterialFactory.Create(MaterialType.Chrome)),
 
         //back
         new Triangle(new Vector3D(-200, -300, 1000), new Vector3D(-200, 600, 1000), new Vector3D(1000, -300, 1000),
             MaterialFactory.Create(MaterialType.YellowPlastic, 0.2)),
-        new Triangle(new Vector3D(1000, -300, 1000), new Vector3D(-200, -300, 1000), new Vector3D(1000, 600, 1010),
+        new Triangle(new Vector3D(1000, -300, 1000), new Vector3D(-200, 600, 1000), new Vector3D(1000, 600, 1010),
             MaterialFactory.Create(MaterialType.YellowPlastic))
     ];
 
@@ -67,19 +68,48 @@ internal static class Program
     {
         var rayTracer = new RayTracer(Objects3D, LightSources);
         using var image = new Image<Rgba32>(Width, Height);
-        for (var y = 0; y < Height; y++)
-            for (var x = 0; x < Width; x++)
-            {
-                // camera setup
-                var origin = new Vector3D(x, y, 0);
-                var focus = new Vector3D(Width / 2, 599, -1200);
-                var direction = origin - focus;
-                var rayIntoScreen = new Ray(origin, direction);
+        var focus = new Vector3D(Width / 2, 599, -1200);
 
-                var color = rayTracer.CalcRay(rayIntoScreen);
-                image[x, y] = color.ConvertToRgba32();
-            }
+        var taskLineRanges = CalcTaskLineRanges();
+        var tasks = new List<Task>();
+        var objLock = new object();
+
+        foreach (var taskRange in taskLineRanges)
+        {
+            var task = Task.Run(() =>
+            {
+                for (var y = taskRange.Item1; y < taskRange.Item2; y++)
+                {
+                    for (var x = 0; x < Width; x++)
+                    {
+                        var origin = new Vector3D(x, y, 0);
+                        var direction = origin - focus;
+                        var rayIntoScreen = new Ray(origin, direction);
+
+                        var color = rayTracer.CalcRay(rayIntoScreen);
+                        lock (objLock)
+                        {
+                            image[x, y] = color.ConvertToRgba32();
+                        }
+                    }
+                }
+            });
+            tasks.Add(task);
+        }
+
+        Task.WhenAll(tasks).Wait();
 
         image.SaveAsPng(FilePath);
+    }
+
+    private static List<Tuple<int, int>> CalcTaskLineRanges()
+    {
+        var numberOfThreads = 12;
+        var linesPerTask = Height / numberOfThreads;
+        List<Tuple<int, int>> taskLineRanges = [];
+
+        for (var i = 0; i < numberOfThreads; i++) taskLineRanges.Add(new Tuple<int, int>(i * linesPerTask, (i + 1) * linesPerTask));
+
+        return taskLineRanges;
     }
 }

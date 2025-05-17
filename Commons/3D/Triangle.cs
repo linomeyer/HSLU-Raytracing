@@ -53,7 +53,7 @@ public class Triangle : IObject3D
         var u = ray.Direction;
 
         var denominator = u.ScalarProduct(Normalized);
-        if (Math.Abs(denominator) < MathConstants.Epsilon) return double.MaxValue;
+        if (Math.Abs(denominator) < 1e-6) return double.MaxValue;
 
         var lambda = (A - p).ScalarProduct(Normalized) / denominator;
         return lambda > 0 ? lambda : double.MaxValue;

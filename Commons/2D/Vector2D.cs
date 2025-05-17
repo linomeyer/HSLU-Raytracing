@@ -1,9 +1,9 @@
 ﻿namespace Commons._2D;
 
-public class Vector2D(int x, int y)
+public class Vector2D(double x, double y)
 {
-    public int X => x;
-    public int Y => y;
+    public double X => x;
+    public double Y => y;
 
     public static Vector2D operator +(Vector2D a, Vector2D b) => new(a.X + b.X, a.Y + b.Y);
 

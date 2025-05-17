@@ -25,11 +25,5 @@ public class Vector3D(double x, double y, double z)
         X * other.Y - Y * other.X
     );
 
-    public double EuclideanDistance(Vector3D other)
-    {
-        var distance = this - other;
-        return Math.Sqrt(distance.X * distance.X + distance.Y * distance.Y + distance.Z * distance.Z);
-    }
-
     public override string ToString() => "x: " + X + ", y: " + Y + ", z: " + Z;
 }

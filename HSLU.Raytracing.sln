@@ -28,6 +28,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Room", "Room\Room.csproj", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Final", "Final\Final.csproj", "{7495C4F5-7DB7-462E-9730-D57A2977CAE9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FontDisplay", "FontDisplay\FontDisplay.csproj", "{DEE6D569-2555-470E-9888-1DBE9D816102}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -90,5 +92,9 @@ Global
 		{7495C4F5-7DB7-462E-9730-D57A2977CAE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7495C4F5-7DB7-462E-9730-D57A2977CAE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7495C4F5-7DB7-462E-9730-D57A2977CAE9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DEE6D569-2555-470E-9888-1DBE9D816102}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DEE6D569-2555-470E-9888-1DBE9D816102}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DEE6D569-2555-470E-9888-1DBE9D816102}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DEE6D569-2555-470E-9888-1DBE9D816102}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

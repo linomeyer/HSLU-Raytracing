@@ -45,7 +45,7 @@ public class RayTracer(List<IObject3D> sceneObjects, List<LightSource> lightSour
             }
         }
 
-        if (sceneObject.Material.Reflectivity > 0 && currentDepth < maxDepth)
+        if (sceneObject.Material.Reflectivity > 0 && currentDepth < maxDepth && sceneObject is not Sphere { IsGlass: true })
         {
             var reflectionDirection = CalcReflectionDir(ray.Direction, sceneObject);
             var reflectionRay = new Ray(intersectionPoint + reflectionDirection * MathConstants.Epsilon, reflectionDirection);
@@ -57,13 +57,62 @@ public class RayTracer(List<IObject3D> sceneObjects, List<LightSource> lightSour
 
         if (sceneObject.Material.Transparency > 0 && currentDepth < maxDepth)
         {
-            var refractionRay = new Ray(intersectionPoint + ray.Direction * 0.01, ray.Direction);
-            var refractionColor = CalcRay(refractionRay, currentDepth + 1);
-            var transparency = sceneObject.Material.Transparency;
-            color = color * (1 - transparency) + refractionColor * transparency;
+            if (sceneObject is Sphere { IsGlass: true } glassSphere)
+            {
+                var refractionDirection = CalcDirectionOfRefraction(ray.Direction, sceneObject.Normalized, glassSphere.Material.RefractiveIndex);
+                var refractionRayG = new Ray(intersectionPoint + refractionDirection * 0.01, refractionDirection);
+
+                var refractionColorG = CalcRay(refractionRayG, currentDepth + 1);
+
+                var r0 = Math.Pow((1 - glassSphere.Material.RefractiveIndex) / (1 + glassSphere.Material.RefractiveIndex), 2);
+                var cosTheta = Math.Abs(sceneObject.Normalized.ScalarProduct(-ray.Direction));
+                var fresnelFactor = r0 + (1 - r0) * Math.Pow(1 - cosTheta, 5);
+
+                var reflectionDirection = CalcReflectionDir(ray.Direction, sceneObject);
+                var reflectionRay = new Ray(intersectionPoint + sceneObject.Normalized * 0.01, reflectionDirection);
+
+                var reflectionColor = CalcRay(reflectionRay, currentDepth + 1);
+
+                var trueReflectivity = sceneObject.Material.Reflectivity + (1 - sceneObject.Material.Reflectivity) * fresnelFactor;
+                var trueTransparency = sceneObject.Material.Transparency * (1 - fresnelFactor * 0.8);
+
+                color = color * (1 - trueTransparency - trueReflectivity) + reflectionColor * trueReflectivity + refractionColorG * trueTransparency;
+            }
+            else
+            {
+                var refractionRay = new Ray(intersectionPoint + ray.Direction * 0.01, ray.Direction);
+                var refractionColor = CalcRay(refractionRay, currentDepth + 1);
+                var transparency = sceneObject.Material.Transparency;
+                color = color * (1 - transparency) + refractionColor * transparency;
+            }
         }
 
         return color;
+    }
+
+    private Vector3D CalcDirectionOfRefraction(Vector3D rayDirection, Vector3D normal, double refractionValue)
+    {
+        var cosi = Math.Clamp(rayDirection.ScalarProduct(normal), -1, 1);
+
+        double etai = 1;
+        var etat = refractionValue;
+
+        if (cosi < 0)
+        {
+            cosi = Math.Abs(cosi);
+        }
+        else
+        {
+            (etai, etat) = (etat, etai);
+            normal *= -1;
+        }
+
+        var eta = etai / etat;
+        var k = 1 - Math.Pow(eta, 2) * (1 - Math.Pow(cosi, 2));
+
+        if (k < 0) return rayDirection - normal * (2 * rayDirection.ScalarProduct(normal));
+
+        return rayDirection * eta + normal * (eta * cosi - Math.Sqrt(k));
     }
 
     private RgbColor AddSpecularColoring(IObject3D sceneObject, LightSource lightSource, Vector3D vectorToLightSource, Ray ray)

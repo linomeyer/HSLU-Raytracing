@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("random-pixel-image")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c3e587d6282b4b080e7bd25853247a1bd945442b")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8b9b0173f6c1f56d545f7e75389f04ec03a8113f")]
 [assembly: System.Reflection.AssemblyProductAttribute("random-pixel-image")]
 [assembly: System.Reflection.AssemblyTitleAttribute("random-pixel-image")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

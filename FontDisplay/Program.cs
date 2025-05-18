@@ -3,6 +3,7 @@ using Commons._3D;
 using Commons.Imaging;
 using Commons.Lighting;
 using Commons.Materials;
+using Commons.wavefront;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
@@ -13,7 +14,7 @@ internal static class Program
     private const int Width = 800;
     private const int Height = 600;
     private const int Depth = 600;
-    private const string FilePath = ImageHandler.ImageFolderPath + "refraction-cube-in-room.png";
+    private const string FilePath = ImageHandler.ImageFolderPath + "wavefront-text.png";
 
     private static readonly List<IObject3D> Objects3D =
     [
@@ -21,13 +22,13 @@ internal static class Program
         new Cube(new Vector3D(430, 250, 150), 150, MaterialFactory.Create(MaterialType.Emerald, 0.2, 0.8), 30),
         new Sphere(new Vector3D(600, 200, 500), 80, MaterialFactory.Create(MaterialType.Bronze, 0.3)),
         new Sphere(new Vector3D(650, 475, 200), 100, MaterialFactory.Create(MaterialType.Gold, 0.4)),
-        new Sphere(new Vector3D(400, 430, 150), 90, MaterialFactory.Create(MaterialType.Pearl, 0.6, 0.4)),
-        //floor
+        new Sphere(new Vector3D(400, 430, 150), 90, MaterialFactory.Create(MaterialType.Pearl, 0.6, 0.4))
+        /*//floor
         new Triangle(new Vector3D(-1000, 600, 40), new Vector3D(1800, 600, 40), new Vector3D(-1000, 500, 600),
             MaterialFactory.Create(MaterialType.Obsidian, 0.3)),
         new Triangle(new Vector3D(1800, 600, 40), new Vector3D(1800, 500, 600), new Vector3D(-1000, 500, 600),
-            MaterialFactory.Create(MaterialType.Obsidian, 0.3)),
-        //walls
+            MaterialFactory.Create(MaterialType.Obsidian, 0.3))*/
+        /*//walls
         //left
         new Plane(new Vector3D(-100, -300, 0), new Vector3D(200, 1000, 1000), MaterialFactory.Create(MaterialType.Turquoise)),
         //right
@@ -42,7 +43,7 @@ internal static class Program
         new Triangle(new Vector3D(-200, -300, 1000), new Vector3D(-200, 600, 1000), new Vector3D(1000, -300, 1000),
             MaterialFactory.Create(MaterialType.YellowPlastic, 0.2)),
         new Triangle(new Vector3D(1000, -300, 1000), new Vector3D(-200, 600, 1000), new Vector3D(1000, 600, 1010),
-            MaterialFactory.Create(MaterialType.YellowPlastic))
+            MaterialFactory.Create(MaterialType.YellowPlastic))*/
     ];
 
     private static readonly List<LightSource> LightSources =
@@ -67,20 +68,34 @@ internal static class Program
 
     private static void CreateImage()
     {
-        var rayTracer = new RayTracer(Objects3D, LightSources);
+        var objTriangles = new WavefrontObjConverter(
+            Path.GetFullPath("../../../../wavefront-export/wavefront-text.obj"),
+            MaterialFactory.Create(MaterialType.Gold, 0.2),
+            new Vector3D(400, 200, 300),
+            100
+        ).ConvertWavefrontObjToTriangle();
+
+        Objects3D.AddRange(objTriangles);
+
+        var rayTracer = new RayTracer(Objects3D, LightSources, 3);
         using var image = new Image<Rgba32>(Width, Height);
+        var camera = new Camera(new Vector3D(Width / 2, 599, -1200));
+
         for (var y = 0; y < Height; y++)
+        {
             for (var x = 0; x < Width; x++)
             {
                 // camera setup
                 var origin = new Vector3D(x, y, 0);
-                var focus = new Vector3D(Width / 2, 599, -1200);
-                var direction = origin - focus;
-                var rayIntoScreen = new Ray(origin, direction);
+                var ray = camera.CreateRay(origin);
 
-                var color = rayTracer.CalcRay(rayIntoScreen);
+                var color = rayTracer.CalcRay(new Ray(origin, new Vector3D(0, 0, 1)));
                 image[x, y] = color.ConvertToRgba32();
             }
+
+            Console.WriteLine("Line rendered: " + y + " / " + Height);
+        }
+
 
         image.SaveAsPng(FilePath);
     }

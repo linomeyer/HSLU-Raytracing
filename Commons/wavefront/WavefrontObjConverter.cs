@@ -9,7 +9,7 @@ public class WavefrontObjConverter(string filepath, Material material, Vector3D 
     private readonly WavefrontObj _wavefront = new();
 
     /**
-     * uses only extracted indices (case "f" -> ParseCoordinatesToTriangles) to create our triangles but can be easily modified to return the whole Wavefront file input.
+     * uses only extracted indices (case "F" -> ParseCoordinatesToTriangles) to create our triangles but can be easily modified to return the whole Wavefront file input.
      */
     public List<Triangle> ConvertWavefrontObjToTriangle()
     {
@@ -27,13 +27,13 @@ public class WavefrontObjConverter(string filepath, Material material, Vector3D 
                 case "V":
                     ParseVertex(splitLine);
                     break;
-                case "vn":
+                case "VN":
                     ParseNormal(splitLine);
                     break;
-                case "vt":
+                case "VT":
                     ParseTexture(splitLine);
                     break;
-                case "f":
+                case "F":
                     ParseCoordinatesToTriangles(splitLine);
                     break;
             }
@@ -46,9 +46,9 @@ public class WavefrontObjConverter(string filepath, Material material, Vector3D 
     {
         return _wavefront.Triangles.Select(triangle =>
             new Triangle(
-                triangle.A * scale + position,
-                triangle.B * scale + position,
-                triangle.C * scale + position,
+                (triangle.A * scale).Round(2) + position,
+                (triangle.B * scale).Round(2) + position,
+                (triangle.C * scale).Round(2) + position,
                 material)
         ).ToList();
     }
@@ -57,21 +57,28 @@ public class WavefrontObjConverter(string filepath, Material material, Vector3D 
     {
         if (splitLine.Length >= 4)
         {
-            List<Vector3D> vectors = [];
-            for (var i = 1; i < splitLine.Length; i++) vectors.Add(ParseIndicesToVector(splitLine[i - 1]));
+            List<int[]> indices = [];
+            for (var i = 1; i < splitLine.Length; i++) indices.Add(ParseIndices(splitLine[i]));
 
             // if 4 vectors create 2 triangles with index 0,1,2 and 0,2,3
-            for (var i = 1; i < vectors.Count - 1; i++) _wavefront.Triangles.Add(new Triangle(vectors[0], vectors[i], vectors[i + 1], material));
+            for (var i = 1; i < indices.Count - 1; i++)
+            {
+                var i1 = indices[0];
+                var i2 = indices[i];
+                var i3 = indices[i + 1];
+                if (i1[0] > 0 && i2[0] > 0 && i3[0] > 0)
+                    _wavefront.Triangles.Add(new Triangle(_wavefront.Vertices[i1[0] - 1], _wavefront.Vertices[i2[0] - 1], _wavefront.Vertices[i3[0] - 1],
+                        material));
+            }
         }
     }
 
     /**
      * converts entries like these "3089/3104/223" to Vector3D
      */
-    private static Vector3D ParseIndicesToVector(string indexesString)
+    private static int[] ParseIndices(string indexesString)
     {
-        var vectorValues = indexesString.Split("/").Select(indexString => int.TryParse(indexesString, out var parsedIndex) ? parsedIndex : -1).ToArray();
-        return new Vector3D(vectorValues[0], vectorValues[1], vectorValues[2]);
+        return indexesString.Split("/").Select(indexString => int.TryParse(indexString, out var parsedIndex) ? parsedIndex : -1).ToArray();
     }
 
     private void ParseTexture(string[] splitLine)

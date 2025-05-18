@@ -1,5 +1,6 @@
 ﻿using Commons;
 using Commons._3D;
+using Commons.Imaging;
 using Commons.Lighting;
 using Commons.Materials;
 using SixLabors.ImageSharp;
@@ -68,7 +69,7 @@ internal static class Program
     {
         var rayTracer = new RayTracer(Objects3D, LightSources);
         using var image = new Image<Rgba32>(Width, Height);
-        var focus = new Vector3D(Width / 2, 599, -1200);
+        var camera = new Camera(new Vector3D(Width / 2, 599, -1200));
 
         var taskLineRanges = CalcTaskLineRanges();
         var tasks = new List<Task>();
@@ -82,11 +83,9 @@ internal static class Program
                 {
                     for (var x = 0; x < Width; x++)
                     {
-                        var origin = new Vector3D(x, y, 0);
-                        var direction = origin - focus;
-                        var rayIntoScreen = new Ray(origin, direction);
+                        var ray = camera.CreateRay(new Vector3D(x, y, 0));
 
-                        var color = rayTracer.CalcRay(rayIntoScreen);
+                        var color = rayTracer.CalcRay(ray);
                         lock (objLock)
                         {
                             image[x, y] = color.ConvertToRgba32();
@@ -97,14 +96,14 @@ internal static class Program
             tasks.Add(task);
         }
 
-        Task.WhenAll(tasks).Wait();
+        Task.WaitAll(tasks);
 
         image.SaveAsPng(FilePath);
     }
 
     private static List<Tuple<int, int>> CalcTaskLineRanges()
     {
-        var numberOfThreads = 12;
+        const int numberOfThreads = 12;
         var linesPerTask = Height / numberOfThreads;
         List<Tuple<int, int>> taskLineRanges = [];
 

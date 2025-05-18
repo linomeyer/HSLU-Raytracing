@@ -2,10 +2,11 @@
 
 namespace Commons._3D;
 
-public class Sphere(Vector3D center, int radius, Material material) : IObject3D
+public class Sphere(Vector3D center, double radius, Material material, bool isGlass = false) : IObject3D
 {
     public Vector3D Center => center;
-    public int Radius => radius;
+    public double Radius => radius;
+    public bool IsGlass => isGlass;
     public Material Material => material;
     public Vector3D Normalized { get; set; } = new(0, 0, 0);
 

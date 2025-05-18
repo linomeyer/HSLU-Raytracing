@@ -1,8 +1,8 @@
 ﻿using SkiaSharp;
 
-namespace Commons;
+namespace Commons.Imaging;
 
-public class ImageHandler
+public static class ImageHandler
 {
     public const string ImageFolderPath = "../../../../img/";
 

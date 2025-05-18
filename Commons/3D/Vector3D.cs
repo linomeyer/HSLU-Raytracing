@@ -18,6 +18,7 @@ public class Vector3D(double x, double y, double z)
     public double ScalarProduct(Vector3D other, double angle) => Length * other.Length * Math.Cos(angle);
 
     public Vector3D Normalize() => new(X / Length, Y / Length, Z / Length);
+    public Vector3D Round(int digits) => new(Math.Round(X, digits), Math.Round(Y, digits), Math.Round(Z, digits));
 
     public Vector3D CrossProduct(Vector3D other) => new(
         Y * other.Z - Z * other.Y,

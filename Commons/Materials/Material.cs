@@ -7,7 +7,8 @@ public class Material(
     RgbColor specular,
     double shininess,
     double reflectivity = 0,
-    double transparency = 0)
+    double transparency = 0,
+    double refractiveIndex = 0)
 {
     public MaterialType Name => type;
     public RgbColor Ambient => ambient;
@@ -16,4 +17,5 @@ public class Material(
     public double Shininess => shininess;
     public double Reflectivity => reflectivity;
     public double Transparency => transparency;
+    public double RefractiveIndex => refractiveIndex;
 }

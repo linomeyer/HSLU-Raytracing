@@ -18,10 +18,18 @@ internal static class Program
     private static readonly List<IObject3D> Objects3D =
     [
         new Sphere(new Vector3D(150, 475, 200), 100, MaterialFactory.Create(MaterialType.Gold, 0.5)),
-        new Cube(new Vector3D(430, 250, 150), 150, MaterialFactory.Create(MaterialType.Emerald, 0.2, 0.8), 30),
+        //new Cube(new Vector3D(430, 250, 150), 150, MaterialFactory.Create(MaterialType.Emerald, 0.2, 0.8), 30),
         new Sphere(new Vector3D(600, 200, 500), 80, MaterialFactory.Create(MaterialType.Bronze, 0.3)),
         new Sphere(new Vector3D(650, 475, 200), 100, MaterialFactory.Create(MaterialType.Gold, 0.4)),
-        new Sphere(new Vector3D(400, 430, 150), 90, MaterialFactory.Create(MaterialType.Pearl, 0.6, 0.4)),
+        new Sphere(new Vector3D(450, 300, 150), 90, new Material(
+            MaterialType.Chrome,
+            new RgbColor(0.02, 0.02, 0.02),
+            new RgbColor(0.35, 0.35, 0.4),
+            new RgbColor(1, 1, 1),
+            0.8f,
+            0.25f,
+            0.98f
+        ), true),
         //floor
         new Triangle(new Vector3D(-1000, 600, 40), new Vector3D(1800, 600, 40), new Vector3D(-1000, 500, 600),
             MaterialFactory.Create(MaterialType.Obsidian, 0.3)),
@@ -67,14 +75,30 @@ internal static class Program
 
     private static void CreateImage()
     {
-        var rayTracer = new RayTracer(Objects3D, LightSources);
-        using var image = new Image<Rgba32>(Width, Height);
-        var camera = new Camera(new Vector3D(Width / 2, 599, -1200));
-
         var taskLineRanges = CalcTaskLineRanges();
         var tasks = new List<Task>();
         var objLock = new object();
 
+        var rayTracer = new RayTracer(Objects3D, LightSources);
+        using var image = new Image<Rgba32>(Width, Height);
+        var camera = new Camera(new Vector3D(Width / 2, 599, -1200));
+
+        for (var y = 0; y < Height; y++)
+        {
+            for (var x = 0; x < Width; x++)
+            {
+                // camera setup
+                var origin = new Vector3D(x, y, 0);
+                var ray = camera.CreateRay(origin);
+
+                var color = rayTracer.CalcRay(ray);
+                image[x, y] = color.ConvertToRgba32();
+            }
+
+            Console.WriteLine("Line rendered: " + y + " / " + Height);
+        }
+
+        /*
         foreach (var taskRange in taskLineRanges)
         {
             var task = Task.Run(() =>
@@ -97,7 +121,7 @@ internal static class Program
         }
 
         Task.WaitAll(tasks);
-
+*/
         image.SaveAsPng(FilePath);
     }
 

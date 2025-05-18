@@ -89,7 +89,7 @@ internal static class Program
                 var origin = new Vector3D(x, y, 0);
                 var ray = camera.CreateRay(origin);
 
-                var color = rayTracer.CalcRay(new Ray(origin, new Vector3D(0, 0, 1)));
+                var color = rayTracer.CalcRay(ray);
                 image[x, y] = color.ConvertToRgba32();
             }
 

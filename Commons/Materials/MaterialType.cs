@@ -25,5 +25,6 @@ public enum MaterialType
     GreenRubber,
     RedRubber,
     WhiteRubber,
-    YellowRubber
+    YellowRubber,
+    Glass
 }

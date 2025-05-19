@@ -70,10 +70,10 @@ internal static class Program
     {
         var objTriangles = new WavefrontObjConverter(
             Path.GetFullPath("../../../../wavefront-export/wavefront-text.obj"),
-            MaterialFactory.Create(MaterialType.Gold, 0.2),
-            new Vector3D(400, 200, 300),
-            100
-        ).ConvertWavefrontObjToTriangle();
+            MaterialFactory.Create(MaterialType.Gold),
+            new Vector3D(400, 200, 500),
+            10
+        ).ConvertWavefrontObjToTriangles();
 
         Objects3D.AddRange(objTriangles);
 

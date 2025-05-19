@@ -8,10 +8,7 @@ public class WavefrontObjConverter(string filepath, Material material, Vector3D 
 {
     private readonly WavefrontObj _wavefront = new();
 
-    /**
-     * uses only extracted indices (case "F" -> ParseCoordinatesToTriangles) to create our triangles but can be easily modified to return the whole Wavefront file input.
-     */
-    public List<Triangle> ConvertWavefrontObjToTriangle()
+    public List<Triangle> ConvertWavefrontObjToTriangles()
     {
         using var streamreader = new StreamReader(filepath);
         // is { } evaluates to true if value is not null

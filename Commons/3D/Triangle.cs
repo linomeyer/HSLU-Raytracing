@@ -22,7 +22,35 @@ public class Triangle : IObject3D
     public Material Material { get; }
     public Vector3D Normalized { get; set; }
 
+    /**
+     * seems faster and works more accurately more accurate
+     */
     public (bool hasHit, double intersectionDistance) NextIntersection(Ray ray)
+    {
+        var v = B - A;
+        var w = C - A;
+        var h = ray.Direction.CrossProduct(w);
+        var a = v.ScalarProduct(h);
+
+        if (Math.Abs(a) < MathConstants.Epsilon) return (false, double.MaxValue);
+
+        var f = 1 / a;
+        var s = ray.Origin - A;
+        var u = f * s.ScalarProduct(h);
+        if (u < 0 || u > 1) return (false, double.MaxValue);
+
+        var q = s.CrossProduct(v);
+        var v2 = f * ray.Direction.ScalarProduct(q);
+        if (v2 < 0 || u + v2 > 1) return (false, double.MaxValue);
+
+        var x = f * w.ScalarProduct(q);
+        return x > MathConstants.Epsilon ? (true, x) : (false, double.MaxValue);
+    }
+
+    /**
+     * @Deprecated
+     */
+    public (bool hasHit, double intersectionDistance) NextIntersection2(Ray ray)
     {
         var lambda = Lambda(ray);
         if (lambda > 0)
@@ -47,6 +75,9 @@ public class Triangle : IObject3D
         return (false, double.MaxValue);
     }
 
+    /**
+     * @Deprecated
+     */
     private double Lambda(Ray ray)
     {
         var p = ray.Origin;
@@ -59,6 +90,9 @@ public class Triangle : IObject3D
         return lambda > 0 ? lambda : double.MaxValue;
     }
 
+    /**
+     * @Deprecated
+     */
     private bool CheckEqualPrefix(double v1Z, double v2Z, double v3Z) =>
         (v1Z >= 0 && v2Z >= 0 && v3Z >= 0)
         ||

@@ -3,6 +3,7 @@ using Commons._3D;
 using Commons.Imaging;
 using Commons.Lighting;
 using Commons.Materials;
+using Commons.Raytracer;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
@@ -66,7 +67,7 @@ internal static class Program
 
     private static void CreateImage()
     {
-        var rayTracer = new RayTracer(Objects3D, LightSources);
+        var rayTracer = new Raytracer(Objects3D, LightSources);
         using var image = new Image<Rgba32>(Width, Height);
         for (var y = 0; y < Height; y++)
             for (var x = 0; x < Width; x++)

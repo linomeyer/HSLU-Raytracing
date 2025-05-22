@@ -3,16 +3,21 @@ using Commons.Imaging;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Commons;
+namespace Commons.Raytracer;
 
-public class RayTracer(string outputFilename, int maxDepth = 6)
+public class Raytracer(Settings settings)
 {
     public void RenderScene(Scene scene, Camera camera)
     {
-        var rayCalculator = new RayCalculator(scene, maxDepth);
+        var rayCalculator = new RayCalculator(scene, settings.Depth);
 
+        if (settings.DoMultithreading) RenderMulti(scene, camera, rayCalculator);
+        else Render(scene, camera, rayCalculator);
+    }
+
+    private void Render(Scene scene, Camera camera, RayCalculator rayCalculator)
+    {
         using var image = new Image<Rgba32>(scene.Width, scene.Height);
-
         for (var y = 0; y < scene.Height; y++)
         {
             for (var x = 0; x < scene.Width; x++)
@@ -28,7 +33,13 @@ public class RayTracer(string outputFilename, int maxDepth = 6)
             Console.WriteLine("Line rendered: " + y + " / " + scene.Height);
         }
 
-        /*
+        image.SaveAsPng(ImageHandler.ImageFolderPath + settings.OutputFilename);
+    }
+
+    private void RenderMulti(Scene scene, Camera camera, RayCalculator rayCalculator)
+    {
+        using var image = new Image<Rgba32>(scene.Width, scene.Height);
+
         var taskLineRanges = CalcTaskLineRanges(scene.Height);
         var tasks = new List<Task>();
         var objLock = new object();
@@ -42,7 +53,7 @@ public class RayTracer(string outputFilename, int maxDepth = 6)
                     {
                         var ray = camera.CreateRay(new Vector3D(x, y, 0));
 
-                        var color = rayCalculator.CalcRay(ray);
+                        var color = rayCalculator.Calc(ray);
                         lock (objLock)
                         {
                             image[x, y] = color.ConvertToRgba32();
@@ -52,9 +63,9 @@ public class RayTracer(string outputFilename, int maxDepth = 6)
             tasks.Add(task);
         }
 
-        Task.WaitAll(tasks);*/
+        Task.WaitAll(tasks);
 
-        image.SaveAsPng(ImageHandler.ImageFolderPath + outputFilename);
+        image.SaveAsPng(ImageHandler.ImageFolderPath + settings.OutputFilename);
     }
 
     private static List<List<int>> CalcTaskLineRanges(int height)

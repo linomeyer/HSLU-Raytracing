@@ -3,6 +3,7 @@ using Commons._3D;
 using Commons.Imaging;
 using Commons.Lighting;
 using Commons.Materials;
+using Commons.Raytracer;
 using Commons.wavefront;
 
 namespace Final;
@@ -11,7 +12,6 @@ internal static class Program
 {
     private const int Width = 800;
     private const int Height = 600;
-    private const int Depth = 600;
     private const string OutputFilename = "test.png";
 
     private static readonly List<IObject3D> Objects3D =
@@ -61,9 +61,9 @@ internal static class Program
     {
         Objects3D.AddRange(ImportWavefront());
 
-        var rayTracer = new RayTracer(OutputFilename);
+        var rayTracer = new Raytracer(new Settings(OutputFilename));
 
-        var scene = new Scene(Objects3D, LightSources, Width, Height);
+        var scene = new Scene(Objects3D, LightSources, new Dimensions(Width, Height));
         var camera = new Camera(new Vector3D(300, 599, -1200));
 
         rayTracer.RenderScene(scene, camera);

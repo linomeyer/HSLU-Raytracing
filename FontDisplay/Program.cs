@@ -1,20 +1,18 @@
 ﻿using Commons;
 using Commons._3D;
-using Commons.Imaging;
 using Commons.Lighting;
 using Commons.Materials;
+using Commons.Raytracer;
 using Commons.wavefront;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
 
-namespace Room;
+namespace FontDisplay;
 
 internal static class Program
 {
     private const int Width = 800;
     private const int Height = 600;
     private const int Depth = 600;
-    private const string FilePath = ImageHandler.ImageFolderPath + "wavefront-text.png";
+    private const string FilePath = "wavefront-text.png";
 
     private static readonly List<IObject3D> Objects3D =
     [
@@ -77,26 +75,10 @@ internal static class Program
 
         Objects3D.AddRange(objTriangles);
 
-        var rayTracer = new RayTracer(Objects3D, LightSources, 3);
-        using var image = new Image<Rgba32>(Width, Height);
-        var camera = new Camera(new Vector3D(Width / 2, 599, -1200));
+        var raytracer = new Raytracer(new Settings(FilePath));
+        var scene = new Scene(Objects3D, LightSources, new Dimensions(800, 600));
+        var camera = new Camera(new Vector3D(300, 599, -1200));
 
-        for (var y = 0; y < Height; y++)
-        {
-            for (var x = 0; x < Width; x++)
-            {
-                // camera setup
-                var origin = new Vector3D(x, y, 0);
-                var ray = camera.CreateRay(origin);
-
-                var color = rayTracer.CalcRay(ray);
-                image[x, y] = color.ConvertToRgba32();
-            }
-
-            Console.WriteLine("Line rendered: " + y + " / " + Height);
-        }
-
-
-        image.SaveAsPng(FilePath);
+        raytracer.RenderScene(scene, camera);
     }
 }

@@ -11,8 +11,4 @@
         <PackageReference Include="SkiaSharp" Version="3.118.0-preview.2.3"/>
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="BVH\" />
-    </ItemGroup>
-
 </Project>

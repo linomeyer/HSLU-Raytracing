@@ -1,10 +1,25 @@
 ﻿using Commons._3D;
+using Commons.BVH;
 using Commons.Lighting;
 
 namespace Commons.Raytracer;
 
-public class RayCalculator(Scene scene, int maxDepth)
+public class RayCalculator
 {
+    private readonly BVHWrapper? _bvhWrapper;
+    private readonly int _maxDepth;
+    private readonly Scene _scene;
+
+
+    public RayCalculator(Scene scene, int maxDepth, bool useBvh = false)
+    {
+        _scene = scene;
+        _maxDepth = maxDepth;
+        _bvhWrapper = null;
+        if (useBvh)
+            _bvhWrapper = new BVHWrapper(scene.Objects);
+    }
+
     public RgbColor Calc(Ray ray) => Calc(ray, 0);
 
     private RgbColor Calc(Ray ray, int depth)
@@ -12,15 +27,27 @@ public class RayCalculator(Scene scene, int maxDepth)
         var nearestIntersection = double.MaxValue;
         var color = RgbColor.Black;
 
-        foreach (var sceneObject in scene.Objects)
+        if (_bvhWrapper != null)
         {
-            var (hasHit, intersectionDistance) = sceneObject.NextIntersection(ray);
-            if (hasHit && intersectionDistance < nearestIntersection)
+            var (hit, distance, hitObject) = _bvhWrapper.Intersect(ray);
+            if (hit)
             {
-                nearestIntersection = intersectionDistance;
-                var intersectionPoint = CalcHelper.IntersectionPoint(ray, intersectionDistance);
+                var intersectionPoint = CalcHelper.IntersectionPoint(ray, distance);
+                color = CalcColor(ray, hitObject, intersectionPoint, depth);
+            }
+        }
+        else
+        {
+            foreach (var sceneObject in _scene.Objects)
+            {
+                var (hasHit, intersectionDistance) = sceneObject.NextIntersection(ray);
+                if (hasHit && intersectionDistance < nearestIntersection)
+                {
+                    nearestIntersection = intersectionDistance;
+                    var intersectionPoint = CalcHelper.IntersectionPoint(ray, intersectionDistance);
 
-                color = CalcColor(ray, sceneObject, intersectionPoint, depth);
+                    color = CalcColor(ray, sceneObject, intersectionPoint, depth);
+                }
             }
         }
 
@@ -30,7 +57,7 @@ public class RayCalculator(Scene scene, int maxDepth)
     private RgbColor CalcColor(Ray ray, IObject3D sceneObject, Vector3D intersectionPoint, int currentDepth)
     {
         var color = sceneObject.Material.Ambient;
-        foreach (var lightSource in scene.LightSources)
+        foreach (var lightSource in _scene.LightSources)
         {
             var vectorToLightSource = (lightSource.Position - intersectionPoint).Normalize();
             var intersectionPointIsInShadow = CheckRayIntersectionWithOtherObjects(vectorToLightSource, intersectionPoint, lightSource, sceneObject);
@@ -50,7 +77,7 @@ public class RayCalculator(Scene scene, int maxDepth)
 
     private RgbColor CalcRefraction(IObject3D sceneObject, Ray ray, Vector3D intersectionPoint, RgbColor reflectionColor, RgbColor color, int currentDepth)
     {
-        if (sceneObject.Material.Transparency > 0 && currentDepth < maxDepth)
+        if (sceneObject.Material.Transparency > 0 && currentDepth < _maxDepth)
         {
             if (sceneObject is Sphere { IsGlass: true } glassSphere)
             {
@@ -85,7 +112,7 @@ public class RayCalculator(Scene scene, int maxDepth)
         RgbColor color, int currentDepth)
     {
         var reflectionColor = RgbColor.Black;
-        if (sceneObject.Material.Reflectivity > 0 && currentDepth < maxDepth)
+        if (sceneObject.Material.Reflectivity > 0 && currentDepth < _maxDepth)
         {
             var reflectionDirection = CalcReflectionDir(ray.Direction, sceneObject.Normalized);
             var reflectionRay = new Ray(intersectionPoint + reflectionDirection * MathConstants.Epsilon, reflectionDirection);
@@ -129,7 +156,7 @@ public class RayCalculator(Scene scene, int maxDepth)
     {
         if (sceneObject.Material.Shininess > 0)
         {
-            var lightIntensity = lightSource.Intensity * (1.0 / scene.LightSources.Count);
+            var lightIntensity = lightSource.Intensity * (1.0 / _scene.LightSources.Count);
             var reflection = CalcReflectionDir(vectorToLightSource, sceneObject.Normalized);
             var specularExponent = sceneObject.Material.Shininess * MathConstants.ShininessMultiplier;
             var shininessFactor = Math.Pow(Math.Max(0, reflection.ScalarProduct(ray.Direction.Normalize())), specularExponent);
@@ -142,7 +169,7 @@ public class RayCalculator(Scene scene, int maxDepth)
 
     private RgbColor AddDiffuseColoring(IObject3D sceneObject, LightSource lightSource, Vector3D vectorToLightSource)
     {
-        var lightIntensity = lightSource.Intensity * (1.0 / scene.LightSources.Count);
+        var lightIntensity = lightSource.Intensity * (1.0 / _scene.LightSources.Count);
         var colorFactor = Math.Max(0, sceneObject.Normalized.ScalarProduct(vectorToLightSource));
 
         return sceneObject.Material.Diffuse * lightSource.Color * colorFactor * lightIntensity;
@@ -154,7 +181,7 @@ public class RayCalculator(Scene scene, int maxDepth)
         var distanceToLightSource = Math.Abs((intersectionPoint - lightSource.Position).Length);
 
         var rayToLightSource = new Ray(intersectionPoint + vectorToLightSource * MathConstants.Epsilon, vectorToLightSource);
-        foreach (var sceneObject in scene.Objects)
+        foreach (var sceneObject in _scene.Objects)
         {
             var (hasHit, intersectionDistance) = sceneObject.NextIntersection(rayToLightSource);
 

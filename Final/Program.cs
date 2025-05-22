@@ -61,7 +61,7 @@ internal static class Program
     {
         Objects3D.AddRange(ImportWavefront());
 
-        var rayTracer = new Raytracer(new Settings(OutputFilename));
+        var rayTracer = new Raytracer(new Settings(OutputFilename, DoMultithreading: true));
 
         var scene = new Scene(Objects3D, LightSources, new Dimensions(Width, Height));
         var camera = new Camera(new Vector3D(300, 599, -1200));

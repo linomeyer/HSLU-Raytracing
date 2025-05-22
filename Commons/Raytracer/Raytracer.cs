@@ -9,7 +9,7 @@ public class Raytracer(Settings settings)
 {
     public void RenderScene(Scene scene, Camera camera)
     {
-        var rayCalculator = new RayCalculator(scene, settings.Depth);
+        var rayCalculator = new RayCalculator(scene, settings.Depth, settings.UseBvh);
 
         if (settings.DoMultithreading) RenderMulti(scene, camera, rayCalculator);
         else Render(scene, camera, rayCalculator);

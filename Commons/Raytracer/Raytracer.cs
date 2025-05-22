@@ -68,12 +68,12 @@ public class Raytracer(Settings settings)
         image.SaveAsPng(ImageHandler.ImageFolderPath + settings.OutputFilename);
     }
 
-    private static List<List<int>> CalcTaskLineRanges(int height)
+    private List<List<int>> CalcTaskLineRanges(int height)
     {
         var randomizedLines = Enumerable.Range(0, height - 1).OrderBy(_ => Guid.NewGuid()).ToList();
         return randomizedLines
             .Select((item, index) => new { item, index })
-            .GroupBy(x => x.index / (randomizedLines.Count / 12))
+            .GroupBy(x => x.index / (randomizedLines.Count / settings.Threads))
             .Select(group => group.Select(x => x.item).ToList())
             .ToList();
     }

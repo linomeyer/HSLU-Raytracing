@@ -1,7 +1,7 @@
 ﻿using Commons._3D;
 using Commons.Lighting;
 
-namespace Commons;
+namespace Commons.Raytracer;
 
 public class RayCalculator(Scene scene, int maxDepth)
 {

@@ -8,10 +8,7 @@ namespace Room;
 
 internal static class Program
 {
-    private const int Width = 800;
-    private const int Height = 600;
-    private const int Depth = 600;
-    private const string FilePath = "refraction-cube-in-room.png";
+    private const string FilePath = "test.png";
 
     private static readonly List<IObject3D> Objects3D =
     [
@@ -19,7 +16,7 @@ internal static class Program
         new Cube(new Vector3D(430, 250, 150), 150, MaterialFactory.Create(MaterialType.Emerald, 0.2, 0.8), 30),
         new Sphere(new Vector3D(600, 200, 500), 80, MaterialFactory.Create(MaterialType.Bronze, 0.3)),
         new Sphere(new Vector3D(650, 475, 200), 100, MaterialFactory.Create(MaterialType.Gold, 0.4)),
-        new Sphere(new Vector3D(400, 430, 150), 90, MaterialFactory.Create(MaterialType.Pearl, 0.6, 0.4)),
+        new Sphere(new Vector3D(400, 430, 180), 90, MaterialFactory.Create(MaterialType.Pearl, 0.6, 0.7)),
         //floor
         new Triangle(new Vector3D(-1000, 600, 40), new Vector3D(1800, 600, 40), new Vector3D(-1000, 500, 600),
             MaterialFactory.Create(MaterialType.Obsidian, 0.3)),

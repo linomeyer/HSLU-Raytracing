@@ -28,7 +28,7 @@ public class Cube : IObject3D
         var minDistance = double.MaxValue;
         foreach (var plane in _cubeFaces)
         {
-            var (hasHitPlane, intersectionDistance) = plane.NextIntersection(ray);
+            var (hasHitPlane, intersectionDistance) = plane.NextIntersection2(ray);
             if (hasHitPlane && intersectionDistance < minDistance)
             {
                 hasHit = true;

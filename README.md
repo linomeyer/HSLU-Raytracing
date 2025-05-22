@@ -87,8 +87,12 @@ Klasse die mit Länge und Mittelpunkt Würfel generiert. Diese funktioniert aber
 
 <img src="/img/FINAL_V2.png" width=600>
 
-
 ## Performance-Optimierungen
 
-* ### Ausführbar mit Multithreading
-* 
+### Ausführbar mit Multithreading
+
+<img src="/img/Multithreading-progress.png" width=600>
+
+### Ausführbar mit BVH
+
+<img src="/img/BVH-progress.png" width=600>

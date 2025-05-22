@@ -1,11 +1,8 @@
 ﻿using Commons;
 using Commons._3D;
-using Commons.Imaging;
 using Commons.Lighting;
 using Commons.Materials;
 using Commons.Raytracer;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
 
 namespace Room;
 
@@ -14,7 +11,7 @@ internal static class Program
     private const int Width = 800;
     private const int Height = 600;
     private const int Depth = 600;
-    private const string FilePath = ImageHandler.ImageFolderPath + "refraction-cube-in-room.png";
+    private const string FilePath = "refraction-cube-in-room.png";
 
     private static readonly List<IObject3D> Objects3D =
     [
@@ -68,21 +65,10 @@ internal static class Program
 
     private static void CreateImage()
     {
-        var rayTracer = new Raytracer(Objects3D, LightSources);
-        using var image = new Image<Rgba32>(Width, Height);
-        for (var y = 0; y < Height; y++)
-            for (var x = 0; x < Width; x++)
-            {
-                // camera setup
-                var origin = new Vector3D(x, y, 0);
-                var focus = new Vector3D(Width / 2, 599, -1200);
-                var direction = origin - focus;
-                var rayIntoScreen = new Ray(origin, direction);
+        var raytracer = new Raytracer(new Settings(FilePath));
+        var scene = new Scene(Objects3D, LightSources, new Dimensions(800, 600));
+        var camera = new Camera(new Vector3D(300, 599, -1200));
 
-                var color = rayTracer.CalcRay(rayIntoScreen);
-                image[x, y] = color.ConvertToRgba32();
-            }
-
-        image.SaveAsPng(FilePath);
+        raytracer.RenderScene(scene, camera);
     }
 }

@@ -35,10 +35,4 @@ internal static class Program
 
         return bitmap;
     }
-
-    private static void SaveBitmapAsImage(SKBitmap bitmap)
-    {
-        using var fs = new FileStream(FilePath, FileMode.Create);
-        bitmap.Encode(fs, SKEncodedImageFormat.Png, 100);
-    }
 }
